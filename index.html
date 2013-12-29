@@ -21,14 +21,12 @@
     <div class="vert-text">
       <h1>Live Note</h1>
       <h3><em>Real-time document collaboration. No bullshit*.</em></h3><br /> 
-      <a href="#" id="create" class="btn btn-success btn-lg">Start your draft</a>
+      <a href="#" rel="nofollow" id="create" class="btn btn-success btn-lg">Start your draft</a>
+      <script type="text/javascript">
+        document.getElementById("create").href = new Date().valueOf().toString(16);
+      </script>
     </div>
   </div>
-  <!-- JavaScript -->
-  <script src="/public/js/jquery.min.js"></script>
-  <script src="/public/js/bootstrap.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/public/js/main.js"></script>
 
 </body>
 
