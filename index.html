@@ -14,48 +14,7 @@
   <!-- Add custom CSS here -->
   <link href="/socket.io/css/style.css" rel="stylesheet">
 </head>
-
-<<<<<<< HEAD
 <body>
-=======
-  <body>
-  
-    <!-- Full Page Image Header Area -->
-    <div id="top" class="header">
-      <div class="vert-text">
-        <h1>Live Note</h1>
-        <h3><em>Real-time document collaboration. No bullshit*.</em></h3><br /> 
-        <a href="#about" class="btn btn-success btn-lg">Start your draft</a>
-      </div>
-    </div>
-    <div class="vert-text">
-            <h3><em>Real-time document collaboration. No bullshit*.</em></h3><br /> 
-    </div>
-
- 
-    <!-- JavaScript -->
-    <script src="/socket.io/js/jquery.min.js"></script>
-    <script src="/socket.io/js/bootstrap.js"></script>
-
-    <!-- Custom JavaScript for the Side Menu and Smooth Scrolling -->
-    <script>
-        $("#menu-close").click(function(e) {
-            e.preventDefault();
-            $("#sidebar-wrapper").toggleClass("active");
-        });
-    </script>
-    <script>
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $("#sidebar-wrapper").toggleClass("active");
-        });
-    </script>
-    <script>
-      $(function() {
-        $('a[href*=#]:not([href=#])').click(function() {
-          if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
-            || location.hostname == this.hostname) {
->>>>>>> 889c21835e6d942047ab2f0590965f7846af575d
 
   <!-- Full Page Image Header Area -->
   <div id="top" class="header">
@@ -70,7 +29,7 @@
   <script src="/socket.io/js/jquery.min.js"></script>
   <script src="/socket.io/js/bootstrap.js"></script>
   <script src="/socket.io/js/main.js"></script>
-  script src="/socket.io/socket.io.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script>
   var socket = io.connect('http://localhost');
   socket.on('news', function (data) {
