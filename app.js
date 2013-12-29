@@ -44,11 +44,3 @@ io.static.add('/style.css', {
   },
   file: 'css/style.css'
 });
-io.static.add('/bg.jpg', {
-  mime: {
-    type: 'image/jpeg',
-    encoding: 'utf8',
-    gzip: true
-  },
-  file: 'img/bg.jpg'
-});
