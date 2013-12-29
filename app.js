@@ -6,10 +6,6 @@ var express = require('express')
 
 server.listen(8080);
 
-app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
-});
-
 io.sockets.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
   socket.on('my other event', function (data) {
@@ -17,18 +13,7 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
-app.get('/js/jquery.min.js', function (req, res) {
-  res.sendfile(__dirname + '/js/jquery.min.js');
+app.get('/', function (req, res) {
+  res.sendfile(__dirname + '/index.html');
 });
-app.get('/js/bootstrap.js', function (req, res) {
-  res.sendfile(__dirname + '/js/bootstrap.js');
-});
-app.get('/js/main.js', function (req, res) {
-  res.sendfile(__dirname + '/js/main.js');
-});
-app.get('/css/bootstrap.css', function (req, res) {
-  res.sendfile(__dirname + '/css/bootstrap.css');
-});
-app.get('/css/style.css', function (req, res) {
-  res.sendfile(__dirname + '/css/style.css');
-});
+app.use("/public", express.static(__dirname + "/public"));
