@@ -4,8 +4,30 @@ var app = require('http').createServer(handler)
 
 app.listen(8080);
 
+function handler (req, res) {
+  fs.readFile(__dirname + '/index.html',
+  function (err, data) {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading index.html');
+    }
+
+    res.writeHead(200);
+    res.end(data);
+  });
+}
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+});
+
+
 io.static.add('/jquery.min.js', {file: 'js/jquery.min.js'});
 io.static.add('/bootstrap.js', {file: 'js/bootstrap.js'});
+io.static.add('/main.js', {file: 'js/main.js'});
 io.static.add('/bootstrap.css', {
   mime: {
     type: 'text/css',
@@ -29,24 +51,4 @@ io.static.add('/bg.jpg', {
     gzip: true
   },
   file: 'img/bg.jpg'
-});
-
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-
-    res.writeHead(200);
-    res.end(data);
-  });
-}
-
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
 });

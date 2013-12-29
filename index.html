@@ -1,67 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <title>Write Live</title>
+  <title>Write Live</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="/socket.io/css/bootstrap.css" rel="stylesheet">
+  <!-- Bootstrap core CSS -->
+  <link href="/socket.io/css/bootstrap.css" rel="stylesheet">
 
-    <!-- Add custom CSS here -->
-    <link href="/socket.io/css/style.css" rel="stylesheet">
-  </head>
+  <!-- Add custom CSS here -->
+  <link href="/socket.io/css/style.css" rel="stylesheet">
+</head>
 
-  <body>
-  
-    <!-- Full Page Image Header Area -->
-    <div id="top" class="header">
-      <div class="vert-text">
-        <h1>Live Note</h1>
-        <h3><em>Real-time document collaboration. No bullshit*.</em></h3><br /> 
-        <a href="#about" class="btn btn-success btn-lg">Start your draft</a>
-      </div>
+<body>
+
+  <!-- Full Page Image Header Area -->
+  <div id="top" class="header">
+    <div class="vert-text">
+      <h1>Live Note</h1>
+      <h3><em>Real-time document collaboration. No bullshit*.</em></h3><br /> 
+      <a href="#about" class="btn btn-success btn-lg">Start your draft</a>
     </div>
- 
-    <!-- JavaScript -->
-    <script src="/socket.io/js/jquery.min.js"></script>
-    <script src="/socket.io/js/bootstrap.js"></script>
+  </div>
 
-    <!-- Custom JavaScript for the Side Menu and Smooth Scrolling -->
-    <script>
-        $("#menu-close").click(function(e) {
-            e.preventDefault();
-            $("#sidebar-wrapper").toggleClass("active");
-        });
-    </script>
-    <script>
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $("#sidebar-wrapper").toggleClass("active");
-        });
-    </script>
-    <script>
-      $(function() {
-        $('a[href*=#]:not([href=#])').click(function() {
-          if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
-            || location.hostname == this.hostname) {
+  <!-- JavaScript -->
+  <script src="/socket.io/js/jquery.min.js"></script>
+  <script src="/socket.io/js/bootstrap.js"></script>
+  <script src="/socket.io/js/main.js"></script>
+  script src="/socket.io/socket.io.js"></script>
+  <script>
+  var socket = io.connect('http://localhost');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+  </script>
 
-            var target = $(this.hash);
-            target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-            if (target.length) {
-              $('html,body').animate({
-                scrollTop: target.offset().top
-              }, 1000);
-              return false;
-            }
-          }
-        });
-      });
-    </script>
-
-  </body>
+</body>
 
 </html>
