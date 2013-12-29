@@ -1,21 +1,14 @@
-var app = require('http').createServer(handler)
-  , io = require('socket.io').listen(app)
-  , fs = require('fs')
+var express = require('express')
+  , app = express()
+  , http = require('http')
+  , server = http.createServer(app)
+  , io = require('socket.io').listen(server);
 
-app.listen(8080);
+server.listen(8080);
 
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-
-    res.writeHead(200);
-    res.end(data);
-  });
-}
+app.get('/', function (req, res) {
+  res.sendfile(__dirname + '/index.html');
+});
 
 io.sockets.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
@@ -24,23 +17,18 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
-
-io.static.add('/jquery.min.js', {file: 'js/jquery.min.js'});
-io.static.add('/bootstrap.js', {file: 'js/bootstrap.js'});
-io.static.add('/main.js', {file: 'js/main.js'});
-io.static.add('/bootstrap.css', {
-  mime: {
-    type: 'text/css',
-    encoding: 'utf8',
-    gzip: true
-  },
-  file: 'css/bootstrap.css'
+app.get('/js/jquery.min.js', function (req, res) {
+  res.sendfile(__dirname + '/js/jquery.min.js');
 });
-io.static.add('/style.css', {
-  mime: {
-    type: 'text/css',
-    encoding: 'utf8',
-    gzip: true
-  },
-  file: 'css/style.css'
+app.get('/js/bootstrap.js', function (req, res) {
+  res.sendfile(__dirname + '/js/bootstrap.js');
+});
+app.get('/js/main.js', function (req, res) {
+  res.sendfile(__dirname + '/js/main.js');
+});
+app.get('/css/bootstrap.css', function (req, res) {
+  res.sendfile(__dirname + '/css/bootstrap.css');
+});
+app.get('/css/style.css', function (req, res) {
+  res.sendfile(__dirname + '/css/style.css');
 });
