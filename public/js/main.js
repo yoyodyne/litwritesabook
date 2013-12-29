@@ -1,5 +1,5 @@
 $(function() {
-
+	$("#create").attr("href",new Date().valueOf().toString(16));
 });
 
 var socket = io.connect('http://localhost');
