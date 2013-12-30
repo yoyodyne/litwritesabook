@@ -5,7 +5,7 @@ var express = require('express')
 , io = require('socket.io').listen(server)
 , sqlite3 = require('sqlite3');
 
-server.listen(8080);
+server.listen(80);
 
 var db = new sqlite3.Database('livenote.sqlite3'); 
 // db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
