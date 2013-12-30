@@ -5,7 +5,10 @@ var express = require('express')
 , io = require('socket.io').listen(server)
 , sqlite3 = require('sqlite3');
 
-server.listen(80);
+var port = process.env.OPENSHIFT_NODEJS_PORT || 8080
+, ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+
+server.listen(port,ip);
 
 var db = new sqlite3.Database('livenote.sqlite3'); 
 // db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
