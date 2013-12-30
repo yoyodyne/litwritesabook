@@ -27,6 +27,7 @@ io.sockets.on('connection', function (socket) {
   });
   socket.on("changeNote",function(data){
     socket.broadcast.emit('changeBackNote', data);
+    db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+data.note+"' )");
   })
 });
 
