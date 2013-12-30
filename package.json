@@ -1,7 +1,7 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "Livenote",
   "version": "1.0.0",
-  "description": "OpenShift Sample Application",
+  "description": "Livenote application",
   "keywords": [
     "OpenShift",
     "Node.js",
@@ -9,11 +9,11 @@
     "openshift"
   ],
   "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url": "http://www.openshift.com/"
+    "name": "Aditya Patadia",
+    "email": "aditya@patadia.org",
+    "url": "http://aditya.patadia.org/"
   },
-  "homepage": "http://www.openshift.com/",
+  "homepage": "http://livenote.org/",
   "repository": {
     "type": "git",
     "url": "https://github.com/openshift/origin-server"
@@ -25,11 +25,13 @@
   },
 
   "dependencies": {
-    "express": "~3.4.4"
+    "express": "~3.4.7",
+    "socket.io":"~0.9.16",
+    "sqlite":"~1.0.4"
   },
   "devDependencies": {},
   "bundleDependencies": [],
 
   "private": true,
-  "main": "server.js"
+  "main": "app.js"
 }
