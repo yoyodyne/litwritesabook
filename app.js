@@ -40,6 +40,22 @@ io.sockets.on('connection', function (socket) {
   });
   socket.on("changeNote",function(data){
     socket.broadcast.to(data.id).emit('changeBackNote', data);
+    db.get("select id,note from notes where id = '"+data.id+"'",function(err,row){
+      var newval;
+      if(row){
+        newval = row.note;
+      } else {
+        newval= "";
+      }
+      var op = data.op;
+      if(op.d!==null) {
+        newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
+      }
+      if(op.i!==null){
+        newval = newval.insert(op.p,op.i);
+      } 
+      db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+newval+"' )");
+    });
   });
   socket.on("saveNote",function(data){
     db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+data.note+"' )");
@@ -56,4 +72,14 @@ app.get('/:id', function (req, res) {
 });
 
 app.use("/public", express.static(__dirname + "/public"));
+
+
+String.prototype.insert = function (index, string) {
+  if (index > 0)
+    return this.substring(0, index) + string + this.substring(index, this.length);
+  else
+    return string + this;
+};
+
+
 
