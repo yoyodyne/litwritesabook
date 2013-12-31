@@ -18,7 +18,7 @@ var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
 
 server.listen(port,ip);
 
-var livenotes = new Object();
+var livenotes = new Object(),tout;
 var databaseLoc = (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3";
 var db = new sqlite3.Database(databaseLoc); 
 db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
@@ -30,19 +30,24 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('getNote', function (data) {
     socket.join(data.id);
-    db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
-      if(row){
-        socket.emit('setNote', { note: decodeURIComponent(row.note)});
-        livenotes[data.id] = decodeURIComponent(row.note);
-      } else {
-        socket.emit('setNote', { note: "" });
-        livenotes[data.id] = "";
-      }
-    //res.send(row.note);
-    });
+    if(livenotes[data.id]){
+      socket.emit('setNote', { note: livenotes[data.id]});
+    } else {
+      db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
+        if(row){
+          socket.emit('setNote', { note: decodeURIComponent(row.note)});
+          livenotes[data.id] = decodeURIComponent(row.note);
+        } else {
+          socket.emit('setNote', { note: "" });
+          livenotes[data.id] = "";
+        }
+      //res.send(row.note);
+      });
+    }
   });
 
   socket.on("changeNote",function(data){
+    clearTimeout(tout);
     socket.broadcast.to(data.id).emit('changeBackNote', data);
     var newval = livenotes[data.id];
     var op = data.op;
@@ -53,7 +58,9 @@ io.sockets.on('connection', function (socket) {
       newval = newval.insert(op.p,op.i);
     } 
     livenotes[data.id] = newval;
-    db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
+    tout = setTimeout(function(){
+      db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
+    },2000);
   });
 
 
