@@ -2,7 +2,7 @@ var express = require('express')
 , app = express()
 , http = require('http')
 , server = http.createServer(app)
-, io = require('socket.io').listen(8000)
+, io = require('socket.io').listen(server)
 , sqlite3 = require('sqlite3');
 
 if(process.env.OPENSHIFT_NODEJS_PORT){
@@ -10,6 +10,7 @@ if(process.env.OPENSHIFT_NODEJS_PORT){
   io.enable('browser client etag');          // apply etag caching logic based on version number
   io.enable('browser client gzip');          // gzip the file
   io.set('log level', 1);                    // reduce logging
+  io.set('transports', ['websocket']);
 }
 
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8080
