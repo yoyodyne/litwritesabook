@@ -56,6 +56,8 @@ io.sockets.on('connection', function (socket) {
     db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
   });
 
+  
+
   socket.on("disconnect",function(){
     var room = Object.keys(io.sockets.manager.roomClients[socket.id]);
     room.splice(room.indexOf(""),1);

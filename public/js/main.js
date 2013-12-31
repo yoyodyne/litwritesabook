@@ -21,6 +21,8 @@ socket.on("setNote",function(data){
 });
 
 socket.on("changeBackNote",function(data){
+  $("#note").attr("readonly","readonly");
+  clearTimeout(tout);
 	var newval = $("#note").val();
 	var op = data.op;
 	if(op.d!==null) {
@@ -31,6 +33,9 @@ socket.on("changeBackNote",function(data){
 	} 
 	$("#note").val(newval);
 	oldval = newval;
+  tout = setTimeout(function(){
+    $("#note").removeAttr("readonly").focus();
+  },3000);
 });
 
 
@@ -42,7 +47,7 @@ String.prototype.insert = function (index, string) {
     return string + this;
 };
 
-var op = [],oldval;
+var op = [],oldval,tout;
 var getChange = function(oldval, newval) {
   // Strings are immutable and have reference equality. I think this test is O(1), so its worth doing.
   if (oldval === newval) return null;
