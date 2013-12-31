@@ -28,6 +28,7 @@ db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
 
 io.sockets.on('connection', function (socket) {
   socket.on('getNote', function (data) {
+    socket.join(data.id);
     db.get("select id,note from notes where id = '"+data.id+"'",function(err,row){
       if(row){
         socket.emit('setNote', { note: row.note });
@@ -38,7 +39,7 @@ io.sockets.on('connection', function (socket) {
   });
   });
   socket.on("changeNote",function(data){
-    socket.broadcast.emit('changeBackNote', data);
+    socket.broadcast.to(data.id).emit('changeBackNote', data);
     db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+data.note+"' )");
   })
 });
