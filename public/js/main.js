@@ -1,13 +1,13 @@
 $(function() {
 	$("#note").keyup(function(e){
-		var op = getChange(oldval,$(this).val());
+		var op = getChange(oldval,$(this).html());
     if(op){
 		  socket.emit('changeNote', { id: document.location.href.split("/").pop(), op :op});
-		  oldval = $(this).val();
+		  oldval = $(this).html();
     }
 	});
   $("#save").click(function(e){
-    socket.emit("saveNote",{id: document.location.href.split("/").pop(), note: $("#note").val()});
+    socket.emit("saveNote",{id: document.location.href.split("/").pop(), note: $("#note").html()});
   });
 });
 var socket = io.connect("ws://"+document.location.hostname+":8000");
@@ -20,11 +20,11 @@ socket.on("connect", function() {
 
 socket.on("setNote",function(data){
 	oldval = data.note;
-	$("#note").val(data.note);
+	$("#note").html(data.note);
 });
 
 socket.on("changeBackNote",function(data){
-	var newval = $("#note").val();
+	var newval = $("#note").html();
 	var op = data.op;
 	if(op.d!==null) {
 		newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
@@ -32,7 +32,7 @@ socket.on("changeBackNote",function(data){
 	if(op.i!==null){
 		newval = newval.insert(op.p,op.i);
 	} 
-	$("#note").val(newval);
+	$("#note").html(newval);
 	oldval = newval;
 });
 
