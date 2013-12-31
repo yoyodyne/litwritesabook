@@ -37,6 +37,9 @@ io.sockets.on('connection', function (socket) {
         if(row){
           socket.emit('setNote', { note: decodeURIComponent(row.note)});
           livenotes[data.id] = decodeURIComponent(row.note);
+          if(!row.updateTime){
+            db.run("ALTER TABLE notes ADD COLUMN updateTime INTEGER ",function(err){});
+          }
         } else {
           socket.emit('setNote', { note: "" });
           livenotes[data.id] = "";
@@ -59,7 +62,7 @@ io.sockets.on('connection', function (socket) {
     } 
     livenotes[data.id] = newval;
     tout = setTimeout(function(){
-      db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
+      db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[data.id,encodeURIComponent(newval),new Date().valueOf()]);
     },2000);
   });
 
