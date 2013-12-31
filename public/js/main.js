@@ -18,6 +18,7 @@ socket.on("connect", function() {
 socket.on("setNote",function(data){
 	oldval = data.note;
 	$("#note").val(oldval);
+  $("#note").height( $("#note")[0].scrollHeight );
 });
 
 socket.on("changeBackNote",function(data){
@@ -32,10 +33,11 @@ socket.on("changeBackNote",function(data){
 		newval = newval.insert(op.p,op.i);
 	} 
 	$("#note").val(newval);
+  $("#note").height( $("#note")[0].scrollHeight );
 	oldval = newval;
   tout = setTimeout(function(){
     $("#note").removeAttr("readonly").focus();
-  },3000);
+  },2000);
 });
 
 
