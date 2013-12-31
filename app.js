@@ -5,6 +5,11 @@ var express = require('express')
 , io = require('socket.io').listen(server)
 , sqlite3 = require('sqlite3');
 
+io.enable('browser client minification');  // send minified client
+io.enable('browser client etag');          // apply etag caching logic based on version number
+io.enable('browser client gzip');          // gzip the file
+//io.set('log level', 1);                    // reduce logging
+
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8080
 , ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 

@@ -4,7 +4,8 @@ $(function() {
 	});
 });
 
-var socket = io.connect();
+var port = (document.location.port==80)?":8000":":8080";
+var socket = io.connect(document.location.protocol+"//"+document.location.hostname+port);
 
 socket.emit('getNote', { id: document.location.href.split("/").pop()});
 
