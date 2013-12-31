@@ -5,7 +5,11 @@ $(function() {
 });
 var socket = io.connect("ws://"+document.location.hostname+":8000");
 
-socket.emit('getNote', { id: document.location.href.split("/").pop()});
+socket.on("connect", function() {
+        socket.emit('getNote', { id: document.location.href.split("/").pop()});
+    }).on("disconnect", function() {
+        
+    });
 
 socket.on("setNote",function(data){
 	$("#note").val(data.note);
