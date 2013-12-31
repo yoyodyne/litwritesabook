@@ -1,9 +1,14 @@
 $(function() {
 	$("#note").keyup(function(e){
 		var op = getChange(oldval,$(this).val());
-		socket.emit('changeNote', { id: document.location.href.split("/").pop(), op :op});
-		oldval = $(this).val();
+    if(op){
+		  socket.emit('changeNote', { id: document.location.href.split("/").pop(), op :op});
+		  oldval = $(this).val();
+    }
 	});
+  $("#save").click(function(e){
+    socket.emit("saveNote",{id: document.location.href.split("/").pop(), note: $("#note").val()});
+  });
 });
 var socket = io.connect("ws://"+document.location.hostname+":8000");
 
@@ -28,8 +33,10 @@ socket.on("changeBackNote",function(data){
 		newval = newval.insert(op.p,op.i);
 	} 
 	$("#note").val(newval);
-	oldval = $(this).val();
+	oldval = newval;
 });
+
+
 
 String.prototype.insert = function (index, string) {
   if (index > 0)

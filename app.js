@@ -36,12 +36,14 @@ io.sockets.on('connection', function (socket) {
         socket.emit('setNote', { note: "" });
       }
     //res.send(row.note);
-  });
+    });
   });
   socket.on("changeNote",function(data){
     socket.broadcast.to(data.id).emit('changeBackNote', data);
-    //db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+data.note+"' )");
-  })
+  });
+  socket.on("saveNote",function(data){
+    db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+data.note+"' )");
+  });
 });
 
 app.get('/', function (req, res) {
@@ -54,3 +56,4 @@ app.get('/:id', function (req, res) {
 });
 
 app.use("/public", express.static(__dirname + "/public"));
+
