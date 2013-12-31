@@ -2,13 +2,15 @@ var express = require('express')
 , app = express()
 , http = require('http')
 , server = http.createServer(app)
-, io = require('socket.io').listen(server)
+, io = require('socket.io').listen(8000)
 , sqlite3 = require('sqlite3');
 
-io.enable('browser client minification');  // send minified client
-io.enable('browser client etag');          // apply etag caching logic based on version number
-io.enable('browser client gzip');          // gzip the file
-//io.set('log level', 1);                    // reduce logging
+if(process.env.OPENSHIFT_NODEJS_PORT){
+  io.enable('browser client minification');  // send minified client
+  io.enable('browser client etag');          // apply etag caching logic based on version number
+  io.enable('browser client gzip');          // gzip the file
+  io.set('log level', 1);                    // reduce logging
+}
 
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8080
 , ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
@@ -31,7 +33,7 @@ io.sockets.on('connection', function (socket) {
         socket.emit('setNote', { note: "" });
       }
     //res.send(row.note);
-    });
+  });
   });
   socket.on("changeNote",function(data){
     socket.broadcast.emit('changeBackNote', data);
