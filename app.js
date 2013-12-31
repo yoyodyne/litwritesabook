@@ -20,6 +20,7 @@ server.listen(port,ip);
 
 var databaseLoc = (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3";
 var db = new sqlite3.Database(databaseLoc); 
+var livenotes = new Object();
 db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
   console.log(err);
 });
@@ -33,8 +34,10 @@ io.sockets.on('connection', function (socket) {
     db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
       if(row){
         socket.emit('setNote', { note: decodeURIComponent(row.note)});
+        livenotes[data.id] = decodeURIComponent(row.note);
       } else {
         socket.emit('setNote', { note: "" });
+        livenotes[data.id] = "";
       }
     //res.send(row.note);
     });
@@ -42,22 +45,25 @@ io.sockets.on('connection', function (socket) {
 
   socket.on("changeNote",function(data){
     socket.broadcast.to(data.id).emit('changeBackNote', data);
-    // db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
-    //   var newval;
-    //   if(row){
-    //     newval = decodeURIComponent(row.note);
-    //   } else {
-    //     newval= "";
-    //   }
-    //   var op = data.op;
-    //   if(op.d!==null) {
-    //     newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
-    //   }
-    //   if(op.i!==null){
-    //     newval = newval.insert(op.p,op.i);
-    //   } 
-    //   db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
-    // });
+    var newval = livenotes[data.id];
+    var op = data.op;
+    if(op.d!==null) {
+      newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
+    }
+    if(op.i!==null){
+      newval = newval.insert(op.p,op.i);
+    } 
+    livenotes[data.id] = newval;
+    db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
+  });
+
+  socket.on("disconnect",function(){
+    var room = Object.keys(io.sockets.manager.roomClients[socket.id]);
+    room.splice(room.indexOf(""),1);
+    room = room[0].substring(1);
+    if(io.sockets.clients(room).length<=1){
+      delete livenotes[room];
+    }
   });
 });
 
