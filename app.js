@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
     socket.join(data.id);
     db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
       if(row){
-        socket.emit('setNote', { note: row.note});
+        socket.emit('setNote', { note: decodeURIComponent(row.note)});
       } else {
         socket.emit('setNote', { note: "" });
       }
@@ -45,7 +45,7 @@ io.sockets.on('connection', function (socket) {
     db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
       var newval;
       if(row){
-        newval = row.note;
+        newval = decodeURIComponent(row.note);
       } else {
         newval= "";
       }
@@ -56,7 +56,7 @@ io.sockets.on('connection', function (socket) {
       if(op.i!==null){
         newval = newval.insert(op.p,op.i);
       } 
-      db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,newval]);
+      db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
     });
   });
 });
