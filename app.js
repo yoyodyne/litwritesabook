@@ -20,9 +20,9 @@ server.listen(port,ip);
 
 var databaseLoc = (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3";
 var db = new sqlite3.Database(databaseLoc); 
-// db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
-//  console.log(err);
-// });
+db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
+  console.log(err);
+});
 //db.run("insert into notes (id,note) values ('ddd','This is note.')")
 
 
