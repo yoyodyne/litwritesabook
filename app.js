@@ -37,9 +37,6 @@ io.sockets.on('connection', function (socket) {
         if(row){
           socket.emit('setNote', { note: decodeURIComponent(row.note)});
           livenotes[data.id] = decodeURIComponent(row.note);
-          if(!row.updateTime){
-            db.run("ALTER TABLE notes ADD COLUMN updateTime INTEGER ",function(err){});
-          }
         } else {
           socket.emit('setNote', { note: "" });
           livenotes[data.id] = "";
