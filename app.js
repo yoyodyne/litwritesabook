@@ -44,16 +44,16 @@ io.sockets.on('connection', function (socket) {
 
   socket.on("changeNote",function(data){
     socket.broadcast.to(data.id).emit('changeBackNote', data);
-    // var newval = livenotes[data.id];
-    // var op = data.op;
-    // if(op.d!==null) {
-    //   newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
-    // }
-    // if(op.i!==null){
-    //   newval = newval.insert(op.p,op.i);
-    // } 
-    // livenotes[data.id] = newval;
-    // db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
+    var newval = livenotes[data.id];
+    var op = data.op;
+    if(op.d!==null) {
+      newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
+    }
+    if(op.i!==null){
+      newval = newval.insert(op.p,op.i);
+    } 
+    livenotes[data.id] = newval;
+    db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES (?,?)",[data.id,encodeURIComponent(newval)]);
   });
 
   socket.on("disconnect",function(){

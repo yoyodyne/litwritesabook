@@ -1,9 +1,9 @@
 $(function() {
 	$("#note").keyup(function(e){
-		var op = getChange(oldval,$(this).html());
+		var op = getChange(oldval,$(this).val());
     if(op){
 		  socket.emit('changeNote', { id: document.location.href.split("/").pop(), op :op});
-		  oldval = $(this).html();
+		  oldval = $(this).val();
     }
 	});
 });
@@ -17,11 +17,11 @@ socket.on("connect", function() {
 
 socket.on("setNote",function(data){
 	oldval = data.note;
-	$("#note").html(oldval);
+	$("#note").val(oldval);
 });
 
 socket.on("changeBackNote",function(data){
-	var newval = $("#note").html();
+	var newval = $("#note").val();
 	var op = data.op;
 	if(op.d!==null) {
 		newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
@@ -29,7 +29,7 @@ socket.on("changeBackNote",function(data){
 	if(op.i!==null){
 		newval = newval.insert(op.p,op.i);
 	} 
-	$("#note").html(newval);
+	$("#note").val(newval);
 	oldval = newval;
 });
 
