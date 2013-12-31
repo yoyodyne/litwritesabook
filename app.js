@@ -40,7 +40,7 @@ io.sockets.on('connection', function (socket) {
   });
   socket.on("changeNote",function(data){
     socket.broadcast.to(data.id).emit('changeBackNote', data);
-    db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+data.note+"' )");
+    //db.run("INSERT OR REPLACE INTO notes ('id', 'note') VALUES ('"+data.id+"', '"+data.note+"' )");
   })
 });
 
