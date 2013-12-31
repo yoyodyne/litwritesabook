@@ -6,9 +6,6 @@ $(function() {
 		  oldval = $(this).html();
     }
 	});
-  $("#save").click(function(e){
-    socket.emit("saveNote",{id: document.location.href.split("/").pop(), note: $("#note").html()});
-  });
 });
 var socket = io.connect("ws://"+document.location.hostname+":8000");
 
