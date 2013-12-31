@@ -17,7 +17,7 @@ socket.on("connect", function() {
 
 socket.on("setNote",function(data){
 	oldval = data.note;
-	$("#note").html(data.note);
+	$("#note").html(oldval);
 });
 
 socket.on("changeBackNote",function(data){
