@@ -18,7 +18,8 @@ var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
 
 server.listen(port,ip);
 
-var db = new sqlite3.Database('livenote.sqlite3'); 
+var databaseLoc = (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3";
+var db = new sqlite3.Database(databaseLoc); 
 // db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT)",function(err){
 //  console.log(err);
 // });
