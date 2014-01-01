@@ -5,10 +5,15 @@
   background: transparent;
 }
 
-#note {
-  font-size: 16px;
+.jumbotron h1 {
+  color:  #428bca;
 }
-#centered {
-	text-align: center;
-    margin: 0 auto;
+
+#note {
+  font-size: 18px;
+  height:300px;
+  border: 2px dashed grey;
+  box-shadow: none;
+  --webkit-box-shadow : none;
+  border-radius: none;
 }

@@ -18,7 +18,7 @@ var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
 
 server.listen(port,ip);
 
-var livenotes = new Object(),tout;
+var livenotes = new Object();
 var databaseLoc = (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3";
 var db = new sqlite3.Database(databaseLoc); 
 db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)",function(err){
@@ -27,7 +27,7 @@ db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)"
 
 
 io.sockets.on('connection', function (socket) {
-
+  var tout;
   socket.on('getNote', function (data) {
     socket.join(data.id);
     if(livenotes[data.id]){

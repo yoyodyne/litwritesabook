@@ -2,8 +2,10 @@ $(function() {
 	$("#note").keyup(function(e){
 		var op = getChange(oldval,$(this).val());
     if(op){
-      $(this).height(0);
-      $(this).height( $(this)[0].scrollHeight-10 );
+      if($(this)[0].scrollHeight-10 >300){
+        $(this).height(0);
+        $(this).height( $(this)[0].scrollHeight-10 );
+      }
 		  socket.emit('changeNote', { id: document.location.href.split("/").pop(), op :op});
 		  oldval = $(this).val();
     }
@@ -20,8 +22,10 @@ socket.on("connect", function() {
 socket.on("setNote",function(data){
 	oldval = data.note;
 	$("#note").val(oldval);
-  $("#note").height(0);
-  $("#note").height( $("#note")[0].scrollHeight -10);
+  if($(this)[0].scrollHeight-10 >300){
+    $(this).height(0);
+    $(this).height( $(this)[0].scrollHeight-10 );
+  }
 });
 
 socket.on("changeBackNote",function(data){
@@ -36,8 +40,10 @@ socket.on("changeBackNote",function(data){
 		newval = newval.insert(op.p,op.i);
 	} 
 	$("#note").val(newval);
-  $("#note").height(0);
-  $("#note").height( $("#note")[0].scrollHeight-10 );
+  if($(this)[0].scrollHeight-10 >300){
+    $(this).height(0);
+    $(this).height( $(this)[0].scrollHeight-10 );
+  }
 	oldval = newval;
   tout = setTimeout(function(){
     $("#note").removeAttr("readonly").focus();
