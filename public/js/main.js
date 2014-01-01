@@ -16,13 +16,13 @@ $(function() {
       renderSaved();
     }
   });
-  $(".table").on("click",".btn-xs",function(){
+  $(".panel").on("click",".btn-xs",function(){
     var urls = JSON.parse(localStorage.urls);
     delete urls[$(this).prev().attr("href")];
     localStorage.urls = JSON.stringify(urls);
-    $(this).parent().parent().remove();
-    if($(".table tbody").is(":empty")){
-      $(".table").hide();
+    $(this).parent().remove();
+    if($(".panel .list-group").is(":empty")){
+      $(".panel .list-group").html("<li class='text-center list-group-item'>no drafts saved</li>");
     }
   });
   $("#delete").click(function(){
@@ -83,14 +83,12 @@ socket.on("changeBackNote",function(data){
 
 function renderSaved(){
   var saved = JSON.parse((localStorage.urls)? localStorage.urls:"{}");
-  $("#saved tbody").empty();
+  $(".panel .list-group").empty();
   for (var url in saved) {
-    $("#saved tbody").append("<tr><td><a target='_blank' href='"+url+"''>"+saved[url]+"</a><button title='Delete saved URL' class='btn btn-default btn-xs pull-right'><i class='glyphicon glyphicon-trash'></i></button></td></tr>");
+    $(".panel .list-group").append("<li class='list-group-item' style='text-align: center'><a target='_blank' href='"+url+"''>"+saved[url]+"</a><button title='Delete saved URL' class='btn btn-default btn-xs pull-right'><i class='glyphicon glyphicon-trash'></i></button></li>");
   };
-  if($(".table tbody").is(":empty")){
-    $(".table").hide();
-  } else {
-    $(".table").show();
+  if($(".panel .list-group").is(":empty")){
+    $(".panel .list-group").html("<li class='text-center list-group-item'>no drafts saved</li>");
   }
 }
 
