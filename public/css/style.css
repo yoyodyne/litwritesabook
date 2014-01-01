@@ -16,6 +16,7 @@
   box-shadow: none;
   --webkit-box-shadow : none;
   border-radius: none;
+  resize:vertical;
 }
 
 #centered {
