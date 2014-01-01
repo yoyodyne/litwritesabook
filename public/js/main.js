@@ -82,7 +82,7 @@ socket.on("changeBackNote",function(data){
 
 
 function renderSaved(){
-  var saved = JSON.parse(localStorage.urls);
+  var saved = JSON.parse((localStorage.urls)? localStorage.urls:"{}");
   $("#saved tbody").empty();
   for (var url in saved) {
     $("#saved tbody").append("<tr><td><a target='_blank' href='"+url+"''>"+saved[url]+"</a><button title='Delete saved URL' class='btn btn-default btn-xs pull-right'><i class='glyphicon glyphicon-trash'></i></button></td></tr>");
