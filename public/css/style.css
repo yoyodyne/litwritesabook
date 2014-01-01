@@ -24,3 +24,10 @@
 	width: 50% !important;
     margin: 0 auto;
 }
+
+#livenote-title {
+
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center !important;
+}
