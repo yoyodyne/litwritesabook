@@ -20,39 +20,44 @@
     <!-- Full Page Image Header Area -->
 
     <div class="container">
-      <div class="livenote-title">
-        <h3><a href="http://livenote.org">LiveNote</a></h3>
-          <p class="text-muted">Real-time document collaboration <h4><span id="status" class="label label-danger">disconnected</span></h4></p><br /> 
-      </div>
-        <div class="row">
-          
-          <div class="col-md-10" style="margin-top:0px;">
-          
-            <textarea id="note" class="form-control" placeholder="start typing your draft here..."></textarea>
-          </div>
-          <div class="col-md-2 col-sm-6 col-xs-12" style="margin-top:15px;">
-            <button type="button" id="save" class="btn btn-primary btn-block">save</button>
-            <button type="button" id="delete" class="btn btn-danger btn-block">delete</button>
-            <div class="panel panel-primary" style="margin-top:10px">
-              <div class="panel-heading">
-                <h3 class="panel-title" style="text-align: center">saved drafts</h3>
-              </div>
-              <div class="panel-body" style="text-align: center">
-                draft name
-              </div>
+      <div class="row">
+        <div class="col-md-10">
+          <div class="row">
+            <div class="col-md-10 col-sm-10 col-xs-10">
+              <h3><a href="http://livenote.org">LiveNote</a></h3>
+              <p class="text-muted">Real-time document collaboration</p>
             </div>
-            <p style="text-align: center"><a href="#">export</a> ∗ <a href="mailto:h@hardik.co">help</a> ∗ <a href="#">terms</a></p>
+            <div class="col-md-2 col-sm-2 col-xs-2">
+              <h4 class="pull-right" style="margin-top:25px;"><span id="status" class="label label-danger">disconnected</span></h4>
+            </div>
+            <div class="col-md-12" style="margin-top:0px;">
+              <textarea id="note" class="form-control" placeholder="start typing your draft here..."></textarea>
+            </div>
           </div>
         </div>
+        <div class="col-md-2 col-sm-6 col-xs-12" style="margin-top:15px;">
+          <button type="button" id="save" class="btn btn-primary btn-block">save</button>
+          <button type="button" id="delete" class="btn btn-danger btn-block">delete</button>
+          <div class="panel panel-primary" style="margin-top:10px">
+            <div class="panel-heading">
+              <h3 class="panel-title" style="text-align: center">saved drafts</h3>
+            </div>
+            <div class="panel-body" style="text-align: center">
+              draft name
+            </div>
+          </div>
+          <p style="text-align: center"><a href="#">export</a> ∗ <a href="mailto:h@hardik.co">help</a> ∗ <a href="#">terms</a></p>
+        </div>
       </div>
+    </div>
 
 
-      <!-- JavaScript -->
-      <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-      <script src="/socket.io/socket.io.js"></script>
-      <script src="/public/js/jquery.autosize.min.js"></script>
-      <script src="/public/js/main.js"></script>
+    <!-- JavaScript -->
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/public/js/jquery.autosize.min.js"></script>
+    <script src="/public/js/main.js"></script>
 
-    </body>
+  </body>
 
-    </html>
+  </html>
