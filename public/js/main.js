@@ -15,16 +15,19 @@ var socket = io.connect("ws://"+document.location.hostname+":8000");
 
 socket.on("connect", function() {
         socket.emit('getNote', { id: document.location.href.split("/").pop()});
+        $("#status").removeClass("label-danger label-warning").addClass("label-success").text("Connected");
     }).on("disconnect", function() {
-        
+        $("#status").removeClass("label-success label-warning").addClass("label-danger").text("Disconnected");
+    }).on("connecting",function(){
+        $("#status").removeClass("label-success label-danger").addClass("label-warning").text("Connecting..");
     });
 
 socket.on("setNote",function(data){
 	oldval = data.note;
 	$("#note").val(oldval);
-  if($(this)[0].scrollHeight-10 >300){
-    $(this).height(0);
-    $(this).height( $(this)[0].scrollHeight-10 );
+  if($("#note")[0].scrollHeight-10 >300){
+    $("#note").height(0);
+    $("#note").height( $("#note")[0].scrollHeight-10 );
   }
 });
 
@@ -40,9 +43,9 @@ socket.on("changeBackNote",function(data){
 		newval = newval.insert(op.p,op.i);
 	} 
 	$("#note").val(newval);
-  if($(this)[0].scrollHeight-10 >300){
-    $(this).height(0);
-    $(this).height( $(this)[0].scrollHeight-10 );
+  if($("#note")[0].scrollHeight-10 >300){
+    $("#note").height(0);
+    $("#note").height( $("#note")[0].scrollHeight-10 );
   }
 	oldval = newval;
   tout = setTimeout(function(){
