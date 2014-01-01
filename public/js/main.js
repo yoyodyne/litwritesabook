@@ -23,12 +23,19 @@ socket.on("connect", function() {
     });
 
 socket.on("setNote",function(data){
+  var verb = (data.num==1)?" client":" clients";
+  $("#status").text(data.num+ verb + " connected");
 	oldval = data.note;
 	$("#note").val(oldval);
   if($("#note")[0].scrollHeight-10 >300){
     $("#note").height(0);
     $("#note").height( $("#note")[0].scrollHeight-10 );
   }
+});
+
+socket.on("clientChange",function(data){
+  var verb = (data.num==1)?" client":" clients";
+  $("#status").text(data.num+ verb + " connected");
 });
 
 socket.on("changeBackNote",function(data){

@@ -30,15 +30,17 @@ io.sockets.on('connection', function (socket) {
   var tout;
   socket.on('getNote', function (data) {
     socket.join(data.id);
+    var clientNumber = io.sockets.clients(data.id).length;
+    socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});
     if(livenotes[data.id]){
-      socket.emit('setNote', { note: livenotes[data.id]});
+      socket.emit('setNote', { note: livenotes[data.id],num:clientNumber});
     } else {
       db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
         if(row){
-          socket.emit('setNote', { note: decodeURIComponent(row.note)});
+          socket.emit('setNote', { note: decodeURIComponent(row.note),num:clientNumber});
           livenotes[data.id] = decodeURIComponent(row.note);
         } else {
-          socket.emit('setNote', { note: "" });
+          socket.emit('setNote', { note: "" ,num: clientNumber});
           livenotes[data.id] = "";
         }
       //res.send(row.note);
@@ -69,8 +71,12 @@ io.sockets.on('connection', function (socket) {
     var room = Object.keys(io.sockets.manager.roomClients[socket.id]);
     room.splice(room.indexOf(""),1);
     room = room[0].substring(1);
-    if(io.sockets.clients(room).length<=1){
+    socket.leave(room);
+    var clientNumber = io.sockets.clients(room).length;
+    if(clientNumber==0){
       delete livenotes[room];
+    } else {
+      socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
     }
   });
 });
