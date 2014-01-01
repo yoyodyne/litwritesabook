@@ -1,11 +1,8 @@
 $(function() {
+  $("#note").autosize();
 	$("#note").keyup(function(e){
 		var op = getChange(oldval,$(this).val());
     if(op){
-      if($(this)[0].scrollHeight-10 >300){
-        $(this).height(0);
-        $(this).height( $(this)[0].scrollHeight-10 );
-      }
 		  socket.emit('changeNote', { id: document.location.href.split("/").pop(), op :op});
 		  oldval = $(this).val();
     }
@@ -26,11 +23,7 @@ socket.on("setNote",function(data){
   var verb = (data.num==1)?" client":" clients";
   $("#status").text(data.num+ verb + " connected");
 	oldval = data.note;
-	$("#note").val(oldval);
-  if($("#note")[0].scrollHeight-10 >300){
-    $("#note").height(0);
-    $("#note").height( $("#note")[0].scrollHeight-10 );
-  }
+	$("#note").val(oldval).trigger('autosize.resize');
 });
 
 socket.on("clientChange",function(data){
@@ -49,11 +42,7 @@ socket.on("changeBackNote",function(data){
 	if(op.i!==null){
 		newval = newval.insert(op.p,op.i);
 	} 
-	$("#note").val(newval);
-  if($("#note")[0].scrollHeight-10 >300){
-    $("#note").height(0);
-    $("#note").height( $("#note")[0].scrollHeight-10 );
-  }
+	$("#note").val(newval).trigger('autosize.resize');
 	oldval = newval;
   tout = setTimeout(function(){
     $("#note").removeAttr("readonly").focus();
