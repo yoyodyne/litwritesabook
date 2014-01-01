@@ -7,6 +7,25 @@ $(function() {
 		  oldval = $(this).val();
     }
 	});
+  $("#save").click(function(){
+    var urlName = window.prompt("Please enter name for your note. Saved name and URL will be displayed on left side.");
+    if(urlName) {
+      var urls = JSON.parse((localStorage.urls)? localStorage.urls:"{}");
+      urls[document.location.href] = urlName;
+      localStorage.urls = JSON.stringify(urls);
+      renderSaved();
+    }
+  });
+  $(".table").on("click",".btn-xs",function(){
+    var urls = JSON.parse(localStorage.urls);
+    delete urls[$(this).prev().attr("href")];
+    localStorage.urls = JSON.stringify(urls);
+    $(this).parent().parent().remove();
+    if($(".table tbody").is(":empty")){
+      $(".table").hide();
+    }
+  });
+  renderSaved();
 });
 var socket = io.connect("ws://"+document.location.hostname+":8000");
 
@@ -50,6 +69,18 @@ socket.on("changeBackNote",function(data){
 });
 
 
+function renderSaved(){
+  var saved = JSON.parse(localStorage.urls);
+  $("#saved tbody").empty();
+  for (var url in saved) {
+    $("#saved tbody").append("<tr><td><a target='_blank' href='"+url+"''>"+saved[url]+"</a><button title='Delete saved URL' class='btn btn-default btn-xs pull-right'><i class='glyphicon glyphicon-trash'></i></button></td></tr>");
+  };
+  if($(".table tbody").is(":empty")){
+    $(".table").hide();
+  } else {
+    $(".table").show();
+  }
+}
 
 String.prototype.insert = function (index, string) {
   if (index > 0)
