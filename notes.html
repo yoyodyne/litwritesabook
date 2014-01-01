@@ -21,30 +21,12 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-md-10 col-md-offset-1"><br /> <br /> 
-          Current collaborators: <span id="status" class="label label-danger">Disconnected</span>
-          <br />
-          <div class="row">
-            <div class="col-lg-7">
-              <!--{{ your unique url for this draft }}
-              <div class="btn-group">
-              <button type="button" class="btn btn-default">copy unique url to clipboard</button>  
-            </div>--><!-- /input-group -->
-            <h3><span class="label label-default label-lg">{{ your current url }}</span> 
-              <span class="btn btn-default">copy to clipboard</span></h3>
-            </div></div><br /> 
-            <div class="btn-group">
-              <button type="button" class="btn btn-success">save</button>
-            </div>&nbsp; 
-            <div class="btn-group">
-              <button type="button" class="btn btn-danger">delete</button>
-            </div>&nbsp; 
-            <div class="btn-group">
-              <button type="button" class="btn btn-default">download  <span class="glyphicon glyphicon-save"></span></button>
-            </div>&nbsp; 
-            <div class="btn-group">
-              <button type="button" class="btn btn-info" style="align:right;" >help</button>
-            </div>
+        <div class="col-md-2" style="margin-top:20px;">
+          <button type="button" class="btn btn-default btn-block"><i class="glyphicon glyphicon-floppy-save"></i> Save</button>
+          <button type="button" class="btn btn-default btn-block"><i class="glyphicon glyphicon-trash"></i> Delete</button>
+        </div>
+        <div class="col-md-10">
+          <span id="status" class="label label-danger pull-right">Disconnected</span>
             <textarea id="note" class="form-control" placeholder="start typing here..."></textarea>
           </div>
         </div>
