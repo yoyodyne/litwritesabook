@@ -12,8 +12,15 @@
 #note {
   margin: 20px 0;
   font-size: 18px;
-  border: 2px dashed grey;
+  border: 1px dashed grey;
   box-shadow: none;
   --webkit-box-shadow : none;
   border-radius: none;
+}
+
+#centered {
+	bottom: 0px;
+	position: absolute;
+	width: 50% !important;
+    margin: 0 auto;
 }

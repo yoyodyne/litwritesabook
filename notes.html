@@ -7,31 +7,56 @@
   <meta name="author" content="">
   <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-  <title>Live Note - Realtime document collaboration</title>
+    <title>Live Note - Realtime document collaboration</title>
 
-  <!-- Bootstrap core CSS -->
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Add custom CSS here -->
-  <link href="/public/css/style.css" rel="stylesheet">
-</head>
-<body>
+    <!-- Add custom CSS here -->
+    <link href="/public/css/style.css" rel="stylesheet">
+  </head>
+  <body>
 
-  <!-- Full Page Image Header Area -->
-  <div class="container">
-    <div class="row">
-      <div class="col-md-10 col-md-offset-1">
-        <span id="status" class="label label-danger pull-right">Disconnected</span>
-      	<textarea id="note" class="form-control"></textarea>
+    <!-- Full Page Image Header Area -->
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1"><br /> <br /> 
+          Current collaborators: <span id="status" class="label label-danger">Disconnected</span>
+          <br />
+          <div class="row">
+            <div class="col-lg-7">
+              <!--{{ your unique url for this draft }}
+              <div class="btn-group">
+              <button type="button" class="btn btn-default">copy unique url to clipboard</button>  
+            </div>--><!-- /input-group -->
+            <h3><span class="label label-default label-lg">{{ your current url }}</span> 
+              <span class="btn btn-default">copy to clipboard</span></h3>
+            </div></div><br /> 
+            <div class="btn-group">
+              <button type="button" class="btn btn-success">save</button>
+            </div>&nbsp; 
+            <div class="btn-group">
+              <button type="button" class="btn btn-danger">delete</button>
+            </div>&nbsp; 
+            <div class="btn-group">
+              <button type="button" class="btn btn-default">download  <span class="glyphicon glyphicon-save"></span></button>
+            </div>&nbsp; 
+            <div class="btn-group">
+              <button type="button" class="btn btn-info" style="align:right;" >help</button>
+            </div>
+            <textarea id="note" class="form-control" placeholder="start typing here..."></textarea>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <!-- JavaScript -->
-  <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/public/js/jquery.autosize.min.js"></script>
-  <script src="/public/js/main.js"></script>
 
-</body>
+      
+      <!-- JavaScript -->
+      <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="/public/js/jquery.autosize.min.js"></script>
+      <script src="/public/js/main.js"></script>
 
-</html>
+    </body>
+
+    </html>
