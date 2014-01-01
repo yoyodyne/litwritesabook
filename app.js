@@ -29,12 +29,16 @@ db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)"
 io.sockets.on('connection', function (socket) {
   var tout;
   socket.on('getNote', function (data) {
-    socket.join(data.id);
-    var clientNumber = io.sockets.clients(data.id).length;
-    socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});
+    socket.join(data.id); //join room
+    var clientNumber = io.sockets.clients(data.id).length; //count clients in room
+
+    socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});//send client numbers.
+
     if(livenotes[data.id]){
+      //send notes from variable if available
       socket.emit('setNote', { note: livenotes[data.id],num:clientNumber});
     } else {
+      //if not available, fetch from database and then send it.
       db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
         if(row){
           socket.emit('setNote', { note: decodeURIComponent(row.note),num:clientNumber});
@@ -43,14 +47,17 @@ io.sockets.on('connection', function (socket) {
           socket.emit('setNote', { note: "" ,num: clientNumber});
           livenotes[data.id] = "";
         }
-      //res.send(row.note);
       });
     }
   });
 
   socket.on("changeNote",function(data){
+    //cancel pushing to database.
     clearTimeout(tout);
+    //send data back to clients.
     socket.broadcast.to(data.id).emit('changeBackNote', data);
+
+    //count diff and prepare new note.
     var newval = livenotes[data.id];
     var op = data.op;
     if(op.d!==null) {
@@ -60,6 +67,8 @@ io.sockets.on('connection', function (socket) {
       newval = newval.insert(op.p,op.i);
     } 
     livenotes[data.id] = newval;
+
+    //now push to database after 2 seconds.
     tout = setTimeout(function(){
       db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[data.id,encodeURIComponent(newval),new Date().valueOf()]);
     },2000);
@@ -68,11 +77,14 @@ io.sockets.on('connection', function (socket) {
 
 
   socket.on("disconnect",function(){
+    //get room id
     var room = Object.keys(io.sockets.manager.roomClients[socket.id]);
     room.splice(room.indexOf(""),1);
     room = room[0].substring(1);
-    socket.leave(room);
-    var clientNumber = io.sockets.clients(room).length;
+
+    socket.leave(room);//leave room
+    var clientNumber = io.sockets.clients(room).length; //count clients in room.
+
     if(clientNumber==0){
       delete livenotes[room];
     } else {
