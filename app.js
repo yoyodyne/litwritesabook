@@ -74,7 +74,10 @@ io.sockets.on('connection', function (socket) {
     },2000);
   });
 
-
+  socket.on("delNote",function(data){
+    db.run("DELETE FROM notes WHERE id=?",[data.id]);
+    socket.broadcast.to(data.id).emit('delBackNote', {});
+  });
 
   socket.on("disconnect",function(){
     //get room id

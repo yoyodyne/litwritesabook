@@ -25,6 +25,14 @@ $(function() {
       $(".table").hide();
     }
   });
+  $("#delete").click(function(){
+    if(confirm("Are you sure you want to delete this note?")){
+      socket.emit('delNote', { id: document.location.href.split("/").pop()});
+      setTimeout(function(){
+        window.location = "http://"+document.location.host;
+      },500);
+    }
+  });
   renderSaved();
 });
 var socket = io.connect("ws://"+document.location.hostname+":8000");
@@ -48,6 +56,10 @@ socket.on("setNote",function(data){
 socket.on("clientChange",function(data){
   var verb = (data.num==1)?" client":" clients";
   $("#status").text(data.num+ verb + " connected");
+});
+
+socket.on("delBackNote",function(data){
+  window.location = "http://"+document.location.host;
 });
 
 socket.on("changeBackNote",function(data){
