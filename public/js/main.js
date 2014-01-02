@@ -42,6 +42,7 @@ socket.on("connect", function() {
         $("#status").removeClass("label-danger label-warning").addClass("label-success").text("Connected");
     }).on("disconnect", function() {
         $("#status").removeClass("label-success label-warning").addClass("label-danger").text("Disconnected");
+        $("#note").attr("readonly","readonly");
     }).on("connecting",function(){
         $("#status").removeClass("label-success label-danger").addClass("label-warning").text("Connecting..");
     });
@@ -50,7 +51,7 @@ socket.on("setNote",function(data){
   var verb = (data.num==1)?" client":" clients";
   $("#status").text(data.num+ verb + " connected");
 	oldval = data.note;
-	$("#note").val(oldval).trigger('autosize.resize');
+	$("#note").val(oldval).removeAttr("readonly").trigger('autosize.resize');
 });
 
 socket.on("clientChange",function(data){
