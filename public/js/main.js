@@ -8,7 +8,7 @@ $(function() {
     }
 	});
   $("#save").click(function(){
-    var urlName = window.prompt("Please enter name for your note. Saved name and URL will be displayed on left side.");
+    var urlName = window.prompt("Please enter name for your note. Saved name and URL will be displayed on right side under saved drafts.");
     if(urlName) {
       var urls = JSON.parse((localStorage.urls)? localStorage.urls:"{}");
       urls[document.location.href] = urlName;
