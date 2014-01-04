@@ -101,8 +101,23 @@ app.get('/', function (req, res) {
 });
 
 app.get('/:id', function (req, res) {
-  res.sendfile(__dirname + '/notes.html');
-//  res.send(req.params.id);
+  var serverId = new Date().valueOf();
+  var clientId = parseInt(req.params.id,16);
+  if(isNaN(clientId)){
+    res.redirect(302,"http://www.livenote.org");
+  } else if(clientId < serverId+30000 && clientId > serverId-600000){
+    res.sendfile(__dirname + '/notes.html');
+  } else if(clientId < serverId){
+    db.get("SELECT id,note FROM notes WHERE id = ?",req.params.id,function(err,row){
+        if(row){
+          res.sendfile(__dirname + '/notes.html');
+        } else {
+          res.redirect(302,"http://www.livenote.org");
+        }
+    });
+  } else {
+    res.redirect(302,"http://www.livenote.org");
+  }
 });
 
 app.use("/public", express.static(__dirname + "/public"));
