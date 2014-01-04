@@ -17,12 +17,14 @@ $(function() {
     }
   });
   $(".panel").on("click",".btn-xs",function(){
-    var urls = JSON.parse(localStorage.urls);
-    delete urls[$(this).prev().attr("href")];
-    localStorage.urls = JSON.stringify(urls);
-    $(this).parent().remove();
-    if($(".panel .list-group").is(":empty")){
-      $(".panel .list-group").html("<li class='text-center list-group-item'>no drafts saved</li>");
+    if(confirm("Are you sure you want to delete this saved link?")){
+      var urls = JSON.parse(localStorage.urls);
+      delete urls[$(this).prev().attr("href")];
+      localStorage.urls = JSON.stringify(urls);
+      $(this).parent().remove();
+      if($(".panel .list-group").is(":empty")){
+        $(".panel .list-group").html("<li class='text-center list-group-item'>no drafts saved</li>");
+      }
     }
   });
   $("#delete").click(function(){
