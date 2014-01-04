@@ -3,7 +3,7 @@ $(function() {
 	$("#note").keyup(function(e){
 		var op = getChange(oldval,$(this).val());
     if(op){
-		  socket.emit('changeNote', { id: document.location.href.split("/").pop(), op :op});
+		  socket.emit('changeNote', {op :op});
 		  oldval = $(this).val();
     }
 	});
@@ -27,7 +27,7 @@ $(function() {
   });
   $("#delete").click(function(){
     if(confirm("Are you sure you want to delete this note?")){
-      socket.emit('delNote', { id: document.location.href.split("/").pop()});
+      socket.emit('delNote', {});
       setTimeout(function(){
         window.location = "http://"+document.location.host;
       },500);
@@ -39,7 +39,19 @@ $(function() {
 var socket = io.connect("ws://"+document.location.hostname+":8000");
 
 socket.on("connect", function() {
-        socket.emit('getNote', { id: document.location.href.split("/").pop()});
+        socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
+          var verb = (data.num==1)?" client":" clients";
+          $("#status").text(data.num+ verb + " connected");
+          oldval = data.note;
+          $("#note").val(oldval).removeAttr("readonly").trigger('autosize.resize');
+          if(!localStorage.urlTip){
+            $("#url").popover("show");
+            setTimeout(function(){
+              $("#url").popover("hide");
+            },5000);
+            localStorage.urlTip = true;
+          }
+        });
         $("#status").removeClass("label-danger label-warning").addClass("label-success").text("Connected");
     }).on("disconnect", function() {
         $("#status").removeClass("label-success label-warning").addClass("label-danger").text("Disconnected");
@@ -47,21 +59,6 @@ socket.on("connect", function() {
     }).on("connecting",function(){
         $("#status").removeClass("label-success label-danger").addClass("label-warning").text("Connecting..");
     });
-
-socket.on("setNote",function(data){
-  var verb = (data.num==1)?" client":" clients";
-  $("#status").text(data.num+ verb + " connected");
-	oldval = data.note;
-	$("#note").val(oldval).removeAttr("readonly").trigger('autosize.resize');
-  if(!localStorage.urlTip){
-    $("#url").popover("show");
-    setTimeout(function(){
-      $("#url").popover("hide");
-    },5000);
-    localStorage.urlTip = true;
-  }
-});
-
 
 socket.on("clientChange",function(data){
   var verb = (data.num==1)?" client":" clients";

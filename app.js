@@ -28,23 +28,24 @@ db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)"
 
 io.sockets.on('connection', function (socket) {
   var tout;
-  socket.on('getNote', function (data) {
+  socket.on('init', function (data,callback) {
     socket.join(data.id); //join room
+    socket.set("draftid",data.id);
     var clientNumber = io.sockets.clients(data.id).length; //count clients in room
 
     socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});//send client numbers.
 
     if(livenotes[data.id]){
       //send notes from variable if available
-      socket.emit('setNote', { note: livenotes[data.id],num:clientNumber});
+      callback({ note: livenotes[data.id],num:clientNumber});
     } else {
       //if not available, fetch from database and then send it.
       db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
         if(row){
-          socket.emit('setNote', { note: decodeURIComponent(row.note),num:clientNumber});
+          callback({ note: decodeURIComponent(row.note),num:clientNumber});
           livenotes[data.id] = decodeURIComponent(row.note);
         } else {
-          socket.emit('setNote', { note: "" ,num: clientNumber});
+          callback({ note: "" ,num: clientNumber});
           livenotes[data.id] = "";
         }
       });
@@ -52,47 +53,48 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on("changeNote",function(data){
-    //cancel pushing to database.
-    clearTimeout(tout);
-    //send data back to clients.
-    socket.broadcast.to(data.id).emit('changeBackNote', data);
+    socket.get("draftid",function(err,draftid){
+        //cancel pushing to database.
+      clearTimeout(tout);
+      //send data back to clients.
+      socket.broadcast.to(draftid).emit('changeBackNote', data);
 
-    //count diff and prepare new note.
-    var newval = livenotes[data.id];
-    var op = data.op;
-    if(op.d!==null) {
-      newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
-    }
-    if(op.i!==null){
-      newval = newval.insert(op.p,op.i);
-    } 
-    livenotes[data.id] = newval;
+      //count diff and prepare new note.
+      var newval = livenotes[draftid];
+      var op = data.op;
+      if(op.d!==null) {
+        newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
+      }
+      if(op.i!==null){
+        newval = newval.insert(op.p,op.i);
+      } 
+      livenotes[draftid] = newval;
 
-    //now push to database after 2 seconds.
-    tout = setTimeout(function(){
-      db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[data.id,encodeURIComponent(newval),new Date().valueOf()]);
-    },2000);
+      //now push to database after 2 seconds.
+      tout = setTimeout(function(){
+        db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[draftid,encodeURIComponent(newval),new Date().valueOf()]);
+      },2000);
+    });
   });
 
   socket.on("delNote",function(data){
-    db.run("DELETE FROM notes WHERE id=?",[data.id]);
-    socket.broadcast.to(data.id).emit('delBackNote', {});
+    socket.get("draftid",function(err,draftid){
+      db.run("DELETE FROM notes WHERE id=?",[draftid]);
+      socket.broadcast.to(draftid).emit('delBackNote', {});
+    });
   });
 
   socket.on("disconnect",function(){
-    //get room id
-    var room = Object.keys(io.sockets.manager.roomClients[socket.id]);
-    room.splice(room.indexOf(""),1);
-    room = room[0].substring(1);
+    socket.get("draftid",function(err,room){
+      socket.leave(room);//leave room
+      var clientNumber = io.sockets.clients(room).length; //count clients in room.
 
-    socket.leave(room);//leave room
-    var clientNumber = io.sockets.clients(room).length; //count clients in room.
-
-    if(clientNumber==0){
-      delete livenotes[room];
-    } else {
-      socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
-    }
+      if(clientNumber==0){
+        delete livenotes[room];
+      } else {
+        socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
+      }
+    });
   });
 });
 
