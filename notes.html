@@ -38,12 +38,14 @@
         <div class="col-md-2 col-sm-6 col-xs-12" style="margin-top:15px;">
           <button type="button" id="save" class="btn btn-primary btn-block">save</button>
           <button type="button" id="delete" class="btn btn-danger btn-block">delete</button>
-          <div class="panel panel-primary" style="margin-top:15px;">
+
+          <div class="panel panel-primary" style="margin:5px 0px;">
             <!-- Default panel contents -->
             <div class="panel-heading" style="text-align: center">saved drafts</div>
             <!-- List group -->
             <ul class="list-group"></ul>
           </div>
+          <input id="url" readonly="readonly" class="form-control" onclick="this.select();" data-content="Share this URL with others to edit this draft in real-time" data-placement="bottom" data-trigger="focus" />
           <p style="text-align: center"><a href="http://twitter.com/thelivenote">@thelivenote</a> ∗ <a href="mailto:livenote@hardik.co">help</a> ∗ <a href="#">terms</a></p>
         </div>
       </div>
@@ -52,6 +54,7 @@
 
     <!-- JavaScript -->
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/public/js/jquery.autosize.min.js"></script>
     <script src="/public/js/main.js"></script>

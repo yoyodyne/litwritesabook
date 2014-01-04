@@ -33,6 +33,7 @@ $(function() {
       },500);
     }
   });
+  $("#url").val(document.location.href).popover();
   renderSaved();
 });
 var socket = io.connect("ws://"+document.location.hostname+":8000");
@@ -52,7 +53,15 @@ socket.on("setNote",function(data){
   $("#status").text(data.num+ verb + " connected");
 	oldval = data.note;
 	$("#note").val(oldval).removeAttr("readonly").trigger('autosize.resize');
+  if(!localStorage.urlTip){
+    $("#url").popover("show");
+    setTimeout(function(){
+      $("#url").popover("hide");
+    },5000);
+    localStorage.urlTip = true;
+  }
 });
+
 
 socket.on("clientChange",function(data){
   var verb = (data.num==1)?" client":" clients";
