@@ -102,6 +102,10 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
+app.get('/terms', function (req, res) {
+  res.sendfile(__dirname + '/terms.html');
+});
+
 app.get('/:id', function (req, res) {
   var serverId = new Date().valueOf();
   var clientId = parseInt(req.params.id,16);
