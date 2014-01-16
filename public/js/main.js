@@ -76,7 +76,7 @@ socket.on("delBackNote",function(data){
 });
 
 socket.on("changeBackNote",function(data){
-  $("#note").attr("readonly","readonly");
+  //$("#note").attr("readonly","readonly");
   clearTimeout(tout);
 	var newval = $("#note").val();
 	var op = data.op;
@@ -88,9 +88,9 @@ socket.on("changeBackNote",function(data){
 	} 
 	$("#note").val(newval).trigger('autosize.resize');
 	oldval = newval;
-  tout = setTimeout(function(){
-    $("#note").removeAttr("readonly").focus();
-  },2000);
+  // tout = setTimeout(function(){
+  //   $("#note").removeAttr("readonly").focus();
+  // },2000);
 });
 
 
