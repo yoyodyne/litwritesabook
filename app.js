@@ -108,8 +108,14 @@ app.get('/terms', function (req, res) {
 
 app.get('/:id', function (req, res) {
   var serverId = new Date().valueOf();
-  var clientId = parseInt(req.params.id,16);
-  if(isNaN(clientId)){
+  if(req.params.id.length == 11){
+    var clientId = parseInt(req.params.id,16);
+  } else if (req.params.id.length == 16){
+    var clientId = parseInt(req.params.id.substring(5),16);
+  } else {
+    res.redirect(302,"http://www.livenote.org");
+  }
+  if(isNaN(clientId) || !/^[0-9a-z]+$/.test(clientId)){
     res.redirect(302,"http://www.livenote.org");
   } else if(clientId < serverId+30000 && clientId > serverId-600000){
     res.sendfile(__dirname + '/notes.html');
