@@ -85,9 +85,15 @@ socket.on("changeBackNote",function(data){
 
 	if(op.d!==null) {
 		newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
+    if (pos > op.p){
+      pos = pos - op.d;
+    }
 	}
 	if(op.i!==null){
 		newval = newval.insert(op.p,op.i);
+    if(pos > op.p){
+      pos = pos + op.i.length;
+    }
 	}
 
 	$("#note").val(newval).trigger('autosize.resize');
