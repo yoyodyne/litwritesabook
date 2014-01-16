@@ -1,12 +1,12 @@
 $(function() {
-  $("#note").autosize();
-	$("#note").keyup(function(e){
-		var op = getChange(oldval,$(this).val());
+
+  $("#note").on("hallomodified",function(e,data){
+    var op = getChange(oldval,data.content);
     if(op){
-		  socket.emit('changeNote', {op :op});
-		  oldval = $(this).val();
+      socket.emit('changeNote', {op :op});
+      oldval = data.content;
     }
-	});
+  });
   $("#save").click(function(){
     var urlName = window.prompt("Please enter name for your note. Saved name and URL will be displayed on right side under saved drafts.");
     if(urlName) {
@@ -39,6 +39,16 @@ $(function() {
     $("#export").attr("href","data:text/plain;base64," + btoa($("#note").val()));
     $("#export").attr("download","livenote - "+document.location.href.split("/").pop()+".txt")
   });
+  $('#note').hallo({
+    editable:false,
+    plugins: {
+      'halloformat': {},
+      'halloheadings': {},
+      'hallolists': {},
+      'halloreundo': {}
+    },
+    toolbar: 'halloToolbarFixed'
+  });
   $("#url").val(document.location.href).popover();
   renderSaved();
 });
@@ -49,7 +59,8 @@ socket.on("connect", function() {
           var verb = (data.num==1)?" client":" clients";
           $("#status").text(data.num+ verb + " connected");
           oldval = data.note;
-          $("#note").val(oldval).removeAttr("readonly").trigger('autosize.resize');
+          $('#note').hallo({editable: true});
+          $("#note").html(oldval);
           if(!localStorage.urlTip){
             $("#url").popover("show");
             setTimeout(function(){
@@ -76,9 +87,9 @@ socket.on("delBackNote",function(data){
 });
 
 socket.on("changeBackNote",function(data){
-  $("#note").attr("readonly","readonly");
+  $('#note').hallo({editable: false});
   clearTimeout(tout);
-	var newval = $("#note").val();
+	var newval = $("#note").html();
 	var op = data.op;
 
 	if(op.d!==null) {
@@ -87,11 +98,10 @@ socket.on("changeBackNote",function(data){
 	if(op.i!==null){
 		newval = newval.insert(op.p,op.i);
 	}
-
-	$("#note").val(newval).trigger('autosize.resize');
+  $("#note").html(newval);
 	oldval = newval;
   tout = setTimeout(function(){
-    $("#note").removeAttr("readonly").focus();
+    $('#note').hallo({editable: true});
   },1000);
 });
 
