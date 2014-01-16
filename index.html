@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <title>Live Note - Realtime document collaboration</title>
 
     <!-- Bootstrap core CSS -->
@@ -26,7 +25,12 @@
         <!--      <h4 style="color:grey">Create a draft and share the link with your partner. Save/delete your draft and move on. Simple as that.</h4><br /> -->
         <a href="#" rel="nofollow" id="create" class="btn btn-primary btn-lg">start new draft</a>
         <script type="text/javascript">
-        document.getElementById("create").href = Math.random().toString(36).substr(2, 5) + new Date().valueOf().toString(16);
+        var id = Math.random().toString(36).substr(2, 5) + new Date().valueOf().toString(16);
+        document.getElementById("create").href = id;
+        var ss = document.createElement("link");
+        ss.rel = "prerender";
+        ss.href = window.location+id;
+        document.getElementsByTagName("head")[0].appendChild(ss);
       </script>
       <br/>
       <br/> 
