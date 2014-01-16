@@ -76,32 +76,23 @@ socket.on("delBackNote",function(data){
 });
 
 socket.on("changeBackNote",function(data){
-  //$("#note").attr("readonly","readonly");
+  $("#note").attr("readonly","readonly");
   clearTimeout(tout);
 	var newval = $("#note").val();
 	var op = data.op;
 
-  var pos = $("#note").get(0).selectionStart;
-
 	if(op.d!==null) {
 		newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
-    if (pos > op.p){
-      pos = pos - op.d;
-    }
 	}
 	if(op.i!==null){
 		newval = newval.insert(op.p,op.i);
-    if(pos > op.p){
-      pos = pos + op.i.length;
-    }
 	}
 
 	$("#note").val(newval).trigger('autosize.resize');
-  $("#note").setCursorPosition(pos);
 	oldval = newval;
-  // tout = setTimeout(function(){
-  //   $("#note").removeAttr("readonly").focus();
-  // },2000);
+  tout = setTimeout(function(){
+    $("#note").removeAttr("readonly").focus();
+  },1000);
 });
 
 
@@ -115,21 +106,6 @@ function renderSaved(){
     $(".panel .list-group").html("<li class='text-center list-group-item'>no drafts saved</li>");
   }
 }
-
-$.fn.setCursorPosition = function(pos) {
-  this.each(function(index, elem) {
-    if (elem.setSelectionRange) {
-      elem.setSelectionRange(pos, pos);
-    } else if (elem.createTextRange) {
-      var range = elem.createTextRange();
-      range.collapse(true);
-      range.moveEnd('character', pos);
-      range.moveStart('character', pos);
-      range.select();
-    }
-  });
-  return this;
-};
 
 String.prototype.insert = function (index, string) {
   if (index > 0)
