@@ -35,6 +35,10 @@ $(function() {
       },500);
     }
   });
+  $("#export").click(function(e){
+    $("#export").attr("href","data:text/plain;base64," + btoa($("#note").val()));
+    $("#export").attr("download","livenote - "+document.location.href.split("/").pop()+".txt")
+  });
   $("#url").val(document.location.href).popover();
   renderSaved();
 });
