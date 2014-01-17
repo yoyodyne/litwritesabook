@@ -110,7 +110,7 @@ function renderSaved(){
   var saved = JSON.parse((localStorage.urls)? localStorage.urls:"{}");
   $(".panel .list-group").empty();
   for (var url in saved) {
-    $(".panel .list-group").append("<li class='list-group-item' style='text-align: center'><a target='_blank' href='"+url+"''>"+saved[url]+"</a><button title='Delete saved URL' class='btn btn-default btn-xs pull-right'><i class='glyphicon glyphicon-trash'></i></button></li>");
+    $(".panel .list-group").append("<li class='list-group-item' style='text-align: center'><a target='_blank' href='"+url+"''>"+saved[url]+"</a><button title='Delete saved URL' class='btn btn-default btn-xs pull-right'><i class='fa fa-trash-o'></i></button></li>");
   };
   if($(".panel .list-group").is(":empty")){
     $(".panel .list-group").html("<li class='text-center list-group-item'>no drafts saved</li>");

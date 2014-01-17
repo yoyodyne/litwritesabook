@@ -14,6 +14,7 @@ if(process.env.OPENSHIFT_NODEJS_PORT){
 }
 
 app.use(express.compress());
+app.disable('x-powered-by');
 
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
 , ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
