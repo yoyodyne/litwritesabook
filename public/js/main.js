@@ -36,8 +36,25 @@ $(function() {
     }
   });
   $("#export").click(function(e){
-    $("#export").attr("href","data:text/html;base64," + btoa($("#note").html()));
-    $("#export").attr("download","livenote - "+document.location.href.split("/").pop()+".html")
+    var doc = new jsPDF();
+
+    // We'll make our own renderer to skip this editor
+    var specialElementHandlers = {
+      '#editor': function(element, renderer){
+        return true;
+      }
+    };
+
+    // All units are in the set measurement for the document
+    // This can be changed to "pt" (points), "mm" (Default), "cm", "in"
+    doc.fromHTML($('#note').parent().get(0), 15, 15, {
+      'width': 170, 
+      'elementHandlers': specialElementHandlers
+    });
+    doc.save("livenote - "+document.location.href.split("/").pop()+".pdf");
+    //$("#export").attr("href","data:text/html;base64," + btoa($("#note").html()));
+    //$("#export").attr("download","livenote - "+document.location.href.split("/").pop()+".html");
+    return false;
   });
   $('#note').hallo({
     editable:false,
@@ -55,27 +72,27 @@ $(function() {
 var socket = io.connect("ws://"+document.location.hostname+":8000");
 
 socket.on("connect", function() {
-        socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
-          var verb = (data.num==1)?" client":" clients";
-          $("#status").text(data.num+ verb + " connected");
-          oldval = data.note;
-          $('#note').hallo({editable: true});
-          $("#note").html(oldval);
-          if(!localStorage.urlTip){
-            $("#url").popover("show");
-            setTimeout(function(){
-              $("#url").popover("hide");
-            },5000);
-            localStorage.urlTip = true;
-          }
-        });
-        $("#status").removeClass("label-danger label-warning").addClass("label-success").text("Connected");
-    }).on("disconnect", function() {
-        $("#status").removeClass("label-success label-warning").addClass("label-danger").text("Disconnected");
-        $("#note").attr("readonly","readonly");
-    }).on("connecting",function(){
-        $("#status").removeClass("label-success label-danger").addClass("label-warning").text("Connecting..");
-    });
+  socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
+    var verb = (data.num==1)?" client":" clients";
+    $("#status").text(data.num+ verb + " connected");
+    oldval = data.note;
+    $('#note').hallo({editable: true});
+    $("#note").html(oldval);
+    if(!localStorage.urlTip){
+      $("#url").popover("show");
+      setTimeout(function(){
+        $("#url").popover("hide");
+      },5000);
+      localStorage.urlTip = true;
+    }
+  });
+  $("#status").removeClass("label-danger label-warning").addClass("label-success").text("Connected");
+}).on("disconnect", function() {
+  $("#status").removeClass("label-success label-warning").addClass("label-danger").text("Disconnected");
+  $("#note").attr("readonly","readonly");
+}).on("connecting",function(){
+  $("#status").removeClass("label-success label-danger").addClass("label-warning").text("Connecting..");
+});
 
 socket.on("clientChange",function(data){
   var verb = (data.num==1)?" client":" clients";
@@ -89,17 +106,17 @@ socket.on("delBackNote",function(data){
 socket.on("changeBackNote",function(data){
   $('#note').hallo({editable: false});
   clearTimeout(tout);
-	var newval = $("#note").html();
-	var op = data.op;
+  var newval = $("#note").html();
+  var op = data.op;
 
-	if(op.d!==null) {
-		newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
-	}
-	if(op.i!==null){
-		newval = newval.insert(op.p,op.i);
-	}
+  if(op.d!==null) {
+    newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
+  }
+  if(op.i!==null){
+    newval = newval.insert(op.p,op.i);
+  }
   $("#note").html(newval);
-	oldval = newval;
+  oldval = newval;
   tout = setTimeout(function(){
     $('#note').hallo({editable: true});
   },1000);
@@ -139,41 +156,41 @@ var getChange = function(oldval, newval) {
 
   var commonEnd = 0;
   while (oldval.charAt(oldval.length - 1 - commonEnd) === newval.charAt(newval.length - 1 - commonEnd) &&
-      commonEnd + commonStart < oldval.length && commonEnd + commonStart < newval.length) {
+    commonEnd + commonStart < oldval.length && commonEnd + commonStart < newval.length) {
     commonEnd++;
-  }
+}
 
-  if (oldval.length !== commonStart + commonEnd) {
-  	op.d = oldval.length - commonStart - commonEnd;
-  }
-  if (newval.length !== commonStart + commonEnd) {
-  	op.i = newval.slice(commonStart, newval.length - commonEnd);
-  }
-  return op;
+if (oldval.length !== commonStart + commonEnd) {
+ op.d = oldval.length - commonStart - commonEnd;
+}
+if (newval.length !== commonStart + commonEnd) {
+ op.i = newval.slice(commonStart, newval.length - commonEnd);
+}
+return op;
 };
 
 function b64toBlob(b64Data, contentType, sliceSize) {
-    contentType = contentType || '';
-    sliceSize = sliceSize || 512;
+  contentType = contentType || '';
+  sliceSize = sliceSize || 512;
 
-    var byteCharacters = atob(b64Data);
-    var byteArrays = [];
+  var byteCharacters = atob(b64Data);
+  var byteArrays = [];
 
-    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        var slice = byteCharacters.slice(offset, offset + sliceSize);
+  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    var slice = byteCharacters.slice(offset, offset + sliceSize);
 
-        var byteNumbers = new Array(slice.length);
-        for (var i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-
-        var byteArray = new Uint8Array(byteNumbers);
-
-        byteArrays.push(byteArray);
+    var byteNumbers = new Array(slice.length);
+    for (var i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
     }
 
-    var blob = new Blob(byteArrays, {type: contentType});
-    return blob;
+    var byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+  }
+
+  var blob = new Blob(byteArrays, {type: contentType});
+  return blob;
 }
 
 
