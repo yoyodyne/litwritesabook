@@ -13,6 +13,8 @@ if(process.env.OPENSHIFT_NODEJS_PORT){
   io.set('transports', ['websocket']);
 }
 
+app.use(express.compress());
+
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
 , ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 
