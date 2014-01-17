@@ -24,6 +24,10 @@
   color:grey;
 }
 
+#note[contenteditable=false]{
+  background: #eee;
+}
+
 #centered {
 	bottom: 0px;
 	position: absolute;
