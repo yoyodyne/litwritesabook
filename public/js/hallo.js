@@ -2650,7 +2650,6 @@
         if (!this.element.html().trim()) {
           this.element.html(this.options.placeholder);
           this.element.css({
-            'min-width': this.element.innerWidth(),
             'min-height': this.element.innerHeight()
           });
         }
