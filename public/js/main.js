@@ -12,7 +12,10 @@ $(function() {
     },
     toolbar: 'halloToolbarFixed'
   });
+
   $("#url").val(document.location.href).popover();
+
+  //notif check......
   notif = new Notify("Hello,");
   if(notif.isSupported()){
     if(notif.needsPermission()){
@@ -25,6 +28,7 @@ $(function() {
   } else {
     $("#notif").hide();
   }
+
   //keep checking window focus.....
   $(window).blur(function(){
     localStorage.windowFocus = 0;
@@ -94,6 +98,7 @@ socket.on("changeBackNote",function(data){
     } 
   },1000);
 });
+
 
 function listenEvents(){
   $("#note").on("hallomodified",function(e,data){
@@ -199,10 +204,9 @@ String.prototype.insert = function (index, string) {
 };
 
 var op = [],oldval,tout;
-var getChange = function(oldval, newval) {
+function getChange(oldval, newval) {
   // Strings are immutable and have reference equality. I think this test is O(1), so its worth doing.
   if (oldval === newval) return null;
-  
 
   var commonStart = 0;
   while (oldval.charAt(commonStart) === newval.charAt(commonStart)) {
@@ -215,39 +219,14 @@ var getChange = function(oldval, newval) {
   while (oldval.charAt(oldval.length - 1 - commonEnd) === newval.charAt(newval.length - 1 - commonEnd) &&
     commonEnd + commonStart < oldval.length && commonEnd + commonStart < newval.length) {
     commonEnd++;
-}
-
-if (oldval.length !== commonStart + commonEnd) {
- op.d = oldval.length - commonStart - commonEnd;
-}
-if (newval.length !== commonStart + commonEnd) {
- op.i = newval.slice(commonStart, newval.length - commonEnd);
-}
-return op;
-};
-
-function b64toBlob(b64Data, contentType, sliceSize) {
-  contentType = contentType || '';
-  sliceSize = sliceSize || 512;
-
-  var byteCharacters = atob(b64Data);
-  var byteArrays = [];
-
-  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    var byteNumbers = new Array(slice.length);
-    for (var i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    var byteArray = new Uint8Array(byteNumbers);
-
-    byteArrays.push(byteArray);
   }
 
-  var blob = new Blob(byteArrays, {type: contentType});
-  return blob;
-}
-
+  if (oldval.length !== commonStart + commonEnd) {
+    op.d = oldval.length - commonStart - commonEnd;
+  }
+  if (newval.length !== commonStart + commonEnd) {
+    op.i = newval.slice(commonStart, newval.length - commonEnd);  
+  }
+  return op;
+};
 
