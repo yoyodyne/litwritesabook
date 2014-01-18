@@ -88,7 +88,7 @@ socket.on("changeBackNote",function(data){
     if(localStorage.notif == 1 && localStorage.windowFocus != 1){
       notif = new Notify("LiveNote",{
         notifyClick: onNotifyClick,
-        "body":"There are new chanes in your draft."
+        "body":"There are new changes in your draft."
       });
       notif.show();
     } 
