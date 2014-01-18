@@ -93,7 +93,7 @@ io.sockets.on('connection', function (socket) {
       var clientNumber = io.sockets.clients(room).length; //count clients in room.
 
       if(clientNumber==0){
-        delete livenotes[room];
+        livenotes[room] = null;
       } else {
         socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
       }
