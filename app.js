@@ -104,7 +104,9 @@ io.sockets.on('connection', function (socket) {
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
-
+app.get('/favicon.ico', function (req, res) {
+  res.sendfile(__dirname + '/favicon.ico');
+});
 app.get('/terms', function (req, res) {
   res.sendfile(__dirname + '/terms.html');
 });
