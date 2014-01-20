@@ -5,8 +5,13 @@
   background: transparent;
 }
 
-.jumbotron h1 {
+.jumbotron h2 {
   color:  #428bca;
+}
+
+.logo-img {
+  width:50px;
+  height:50px;
 }
 
 #note {
