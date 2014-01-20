@@ -59,7 +59,7 @@ socket.on("connect", function() {
   $("#status").removeClass("label-danger label-warning").addClass("label-success").text("Connected");
 }).on("disconnect", function() {
   $("#status").removeClass("label-success label-warning").addClass("label-danger").text("Disconnected");
-  $("#note").attr("readonly","readonly");
+  $('#note').hallo({editable: false});
 }).on("connecting",function(){
   $("#status").removeClass("label-success label-danger").addClass("label-warning").text("Connecting..");
 });
