@@ -1,8 +1,8 @@
 var express = require('express')
 , app = express()
-, http = require('http')
-, server = http.createServer(app)
-, io = require('socket.io').listen(server)
+, server = require('http').Server(app)
+, io = require('socket.io')(server)
+, compress = require('compression')()
 , sqlite3 = require('sqlite3');
 
 if(process.env.OPENSHIFT_NODEJS_PORT){
@@ -13,7 +13,7 @@ if(process.env.OPENSHIFT_NODEJS_PORT){
   io.set('transports', ['websocket']);
 }
 
-app.use(express.compress());
+app.use(compress);
 app.disable('x-powered-by');
 
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
@@ -21,20 +21,20 @@ var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
 
 server.listen(port,ip);
 
-var livenotes = new Object();
+var livenotes = {};
 var databaseLoc = (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3";
-var db = new sqlite3.Database(databaseLoc); 
+var db = new sqlite3.Database(databaseLoc);
 db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)",function(err){
   //console.log(err);
 });
 
 
-io.sockets.on('connection', function (socket) {
+io.on('connection', function (socket) {
   var tout;
   socket.on('init', function (data,callback) {
     socket.join(data.id); //join room
-    socket.set("draftid",data.id);
-    var clientNumber = io.sockets.clients(data.id).length; //count clients in room
+    socket.draftid = data.id;
+    var clientNumber = io.in(data.id).sockets.length; //count clients in room
 
     socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});//send client numbers.
 
@@ -56,48 +56,43 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on("changeNote",function(data){
-    socket.get("draftid",function(err,draftid){
         //cancel pushing to database.
       clearTimeout(tout);
       //send data back to clients.
-      socket.broadcast.to(draftid).emit('changeBackNote', data);
+      socket.broadcast.to(socket.draftid).emit('changeBackNote', data);
 
       //count diff and prepare new note.
-      var newval = livenotes[draftid];
+      var newval = livenotes[socket.draftid];
       var op = data.op;
       if(op.d!==null) {
         newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
       }
       if(op.i!==null){
         newval = newval.insert(op.p,op.i);
-      } 
-      livenotes[draftid] = newval;
+      }
+      livenotes[socket.draftid] = newval;
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-        db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[draftid,encodeURIComponent(newval),new Date().valueOf()]);
+        db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[socket.draftid,encodeURIComponent(newval),new Date().valueOf()]);
       },2000);
-    });
   });
 
   socket.on("delNote",function(data){
-    socket.get("draftid",function(err,draftid){
-      db.run("DELETE FROM notes WHERE id=?",[draftid]);
-      socket.broadcast.to(draftid).emit('delBackNote', {});
-    });
+      db.run("DELETE FROM notes WHERE id=?",[socket.draftid]);
+      socket.broadcast.to(socket.draftid).emit('delBackNote', {});
   });
 
   socket.on("disconnect",function(){
-    socket.get("draftid",function(err,room){
+      var room  = socket.draftid;
       socket.leave(room);//leave room
-      var clientNumber = io.sockets.clients(room).length; //count clients in room.
+      var clientNumber = io.in(room).sockets.length; //count clients in room.
 
       if(clientNumber==0){
         livenotes[room] = null;
       } else {
         socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
       }
-    });
   });
 });
 

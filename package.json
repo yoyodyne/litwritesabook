@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "Livenote application",
   "keywords": [
-    "OpenShift",
-    "Node.js",
-    "application",
-    "openshift"
+    "Livenote",
+    "notes",
+    "application"
   ],
   "author": {
     "name": "Aditya Patadia",
@@ -21,13 +20,14 @@
 
   "engines": {
     "node": ">= 0.10",
-    "npm": ">= 1.3.x"
+    "npm": ">= 1.4.7"
   },
 
   "dependencies": {
-    "express": "~3.4.7",
-    "socket.io":"~0.9.16",
-    "sqlite3":"~2.1.19"
+    "express": "~4.1.0",
+    "socket.io":"~1.0",
+    "sqlite3":"~2.2.3",
+    "compression":"~1.0"
   },
   "devDependencies": {},
   "bundleDependencies": [],
