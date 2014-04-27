@@ -8,8 +8,14 @@ var express = require('express'),
 app.use(compress);
 app.disable('x-powered-by');
 
-var port = process.env.OPENSHIFT_NODEJS_PORT || 8000
-, ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+app.use(function (req, res, next) {
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', "http://"+req.headers.host+':8000');
+    next();
+});
+
+var port = process.env.OPENSHIFT_NODEJS_PORT || 8000,
+    ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 
 server.listen(port,ip);
 
