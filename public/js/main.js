@@ -39,7 +39,7 @@ $(function() {
 
 });
 
-var socket = io.connect("ws://"+document.location.hostname+":8000"),notif;
+var socket = io.connect("http://"+document.location.hostname),notif;
 
 socket.on("connect", function() {
   socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
