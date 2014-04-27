@@ -8,6 +8,14 @@ var express = require('express'),
 app.use(compress);
 app.disable('x-powered-by');
 
+app.use(function (req, res, next) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+        next();
+    }
+);
+
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8000,
     ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 
