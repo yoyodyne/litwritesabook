@@ -35,7 +35,7 @@ io.on('connection', function (socket) {
   socket.on('init', function (data,callback) {
     socket.join(data.id); //join room
     socket.draftid = data.id;
-    var clientNumber = io.in(data.id).sockets.length; //count clients in room
+    var clientNumber = Object.keys(socket.adapter.rooms[data.id]).length; //count clients in room
 
     socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});//send client numbers.
 
@@ -87,7 +87,7 @@ io.on('connection', function (socket) {
   socket.on("disconnect",function(){
       var room  = socket.draftid;
       socket.leave(room);//leave room
-      var clientNumber = io.in(room).sockets.length; //count clients in room.
+      var clientNumber = Object.keys(socket.adapter.rooms[room]).length; //count clients in room.
 
       if(clientNumber==0){
         livenotes[room] = null;
