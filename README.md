@@ -18,6 +18,6 @@ We found that the ideal suitable time interval for the writing-cursor to be inac
 ## Queries and support
 For the sake of clarity, we release LiveNote under the [GNU GPLv3](https://www.gnu.org/copyleft/gpl.html) license. We do love to help you out if you run into problems using LiveNote source code.
 
-Contact us by email on [mail@theoctal.com] or tweet us [@OctalHQ].
+Contact us by email on [mail@theoctal.com](mailto:mail@theoctal.com) or tweet us [@OctalHQ](http://twitter.com/octalhq).
 
 Enjoy!
