@@ -17,15 +17,25 @@ app.use(function (req, res, next) {
     }
 );
 
-var port = process.env.OPENSHIFT_NODEJS_PORT || 8000,
-    ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+var livenote = {
 
-server.listen(port,ip);
+  port : process.env.OPENSHIFT_NODEJS_PORT || 8000,
 
-var livenotes = {};
-var databaseLoc = (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3";
-var db = new sqlite3.Database(databaseLoc);
-db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)",function(err){
+  ip : process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1",
+
+  notes: {},
+
+  databaseLoc : (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3",
+
+  db : null,
+
+};
+
+livenote.db = new sqlite3.Database(livenote.databaseLoc);
+
+server.listen(livenote.port, livenote.ip);
+
+livenote.db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)",function(err){
   //console.log(err);
 });
 
@@ -39,18 +49,18 @@ io.on('connection', function (socket) {
 
     socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});//send client numbers.
 
-    if(livenotes[data.id]){
+    if(livenote.notes[data.id]){
       //send notes from variable if available
-      callback({ note: livenotes[data.id],num:clientNumber});
+      callback({ note: livenote.notes[data.id],num:clientNumber});
     } else {
       //if not available, fetch from database and then send it.
-      db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
+      livenote.db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
         if(row){
           callback({ note: decodeURIComponent(row.note),num:clientNumber});
-          livenotes[data.id] = decodeURIComponent(row.note);
+          livenote.notes[data.id] = decodeURIComponent(row.note);
         } else {
           callback({ note: "" ,num: clientNumber});
-          livenotes[data.id] = "";
+          livenote.notes[data.id] = "";
         }
       });
     }
@@ -63,7 +73,7 @@ io.on('connection', function (socket) {
       socket.broadcast.to(socket.draftid).emit('changeBackNote', data);
 
       //count diff and prepare new note.
-      var newval = livenotes[socket.draftid];
+      var newval = livenote.notes[socket.draftid];
       var op = data.op;
       if(op.d!==null) {
         newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
@@ -71,16 +81,16 @@ io.on('connection', function (socket) {
       if(op.i!==null){
         newval = newval.insert(op.p,op.i);
       }
-      livenotes[socket.draftid] = newval;
+      livenote.notes[socket.draftid] = newval;
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-        db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[socket.draftid,encodeURIComponent(newval),new Date().valueOf()]);
+        livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[socket.draftid,encodeURIComponent(newval),new Date().valueOf()]);
       },2000);
   });
 
   socket.on("delNote",function(data){
-      db.run("DELETE FROM notes WHERE id=?",[socket.draftid]);
+      livenote.db.run("DELETE FROM notes WHERE id=?",[socket.draftid]);
       socket.broadcast.to(socket.draftid).emit('delBackNote', {});
   });
 
@@ -89,8 +99,8 @@ io.on('connection', function (socket) {
       socket.leave(room);//leave room
       var clientNumber = Object.keys(socket.adapter.rooms[room]).length; //count clients in room.
 
-      if(clientNumber==0){
-        livenotes[room] = null;
+      if(clientNumber===0){
+        livenote.notes[room] = null;
       } else {
         socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
       }
@@ -121,7 +131,7 @@ app.get('/:id', function (req, res) {
   } else if(clientId < serverId+30000 && clientId > serverId-600000){
     res.sendfile(__dirname + '/notes.html');
   } else if(clientId < serverId){
-    db.get("SELECT id,note FROM notes WHERE id = ?",req.params.id,function(err,row){
+    livenote.db.get("SELECT id,note FROM notes WHERE id = ?",req.params.id,function(err,row){
         if(row){
           res.sendfile(__dirname + '/notes.html');
         } else {
