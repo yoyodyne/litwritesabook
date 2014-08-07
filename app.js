@@ -19,13 +19,13 @@ app.use(function (req, res, next) {
 
 var livenote = {
 
-  port : process.env.OPENSHIFT_NODEJS_PORT || 8000,
+  port : 8000,
 
-  ip : process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1",
+  ip : "127.0.0.1",
 
   notes: {},
 
-  databaseLoc : (process.env.OPENSHIFT_DATA_DIR)?process.env.OPENSHIFT_DATA_DIR+"livenote.sqlite3" : "livenote.sqlite3",
+  databaseLoc : "livenote.sqlite3",
 
   db : null,
 
@@ -54,7 +54,7 @@ io.on('connection', function (socket) {
       callback({ note: livenote.notes[data.id],num:clientNumber});
     } else {
       //if not available, fetch from database and then send it.
-      livenote.db.get("SELECT id,note FROM notes WHERE id = ?",[data.id],function(err,row){
+      livenote.db.get("SELECT id,note FROM notes WHERE id = 'book'",function(err,row){
         if(row){
           callback({ note: decodeURIComponent(row.note),num:clientNumber});
           livenote.notes[data.id] = decodeURIComponent(row.note);
@@ -85,11 +85,11 @@ io.on('connection', function (socket) {
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-        livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[socket.draftid,encodeURIComponent(newval),new Date().valueOf()]);
+        livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",['book',encodeURIComponent(newval),new Date().valueOf()]);
       },2000);
   });
 
-  socket.on("delNote",function(data){
+  socket.on("delNote",function(data){//XXX: Delete this shit
       livenote.db.run("DELETE FROM notes WHERE id=?",[socket.draftid]);
       socket.broadcast.to(socket.draftid).emit('delBackNote', {});
   });
@@ -119,28 +119,14 @@ app.get('/terms', function (req, res) {
 
 app.get('/:id', function (req, res) {
   var serverId = new Date().valueOf();
-  if(req.params.id.length == 11){
-    var clientId = parseInt(req.params.id,16);
-  } else if (req.params.id.length == 16){
-    var clientId = parseInt(req.params.id.substring(5),16);
-  } else {
-    res.redirect(302,"http://www.livenote.org");
-  }
-  if(isNaN(clientId) || !/^[0-9a-z]+$/.test(clientId)){
-    res.redirect(302,"http://www.livenote.org");
-  } else if(clientId < serverId+30000 && clientId > serverId-600000){
-    res.sendfile(__dirname + '/notes.html');
-  } else if(clientId < serverId){
-    livenote.db.get("SELECT id,note FROM notes WHERE id = ?",req.params.id,function(err,row){
+    livenote.db.get("SELECT id,note FROM notes WHERE id = ?",'book',function(err,row){
         if(row){
           res.sendfile(__dirname + '/notes.html');
         } else {
           res.redirect(302,"http://www.livenote.org");
+          console.log('Unknown error. This app is doomed.');
         }
     });
-  } else {
-    res.redirect(302,"http://www.livenote.org");
-  }
 });
 
 app.use("/public", express.static(__dirname + "/public"));
@@ -152,6 +138,3 @@ String.prototype.insert = function (index, string) {
   else
     return string + this;
 };
-
-
-

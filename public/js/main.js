@@ -19,11 +19,11 @@ $(function() {
   notif = new Notify("Hello,");
   if(notif.isSupported()){
     if(notif.needsPermission()){
-      $("#notif").removeClass("btn-primary").addClass("btn-danger").find("span").text("(off)");
+      $("#notif").find("span").text("(off)");
     } else if(!localStorage.notif || localStorage.notif==0){
-      $("#notif").removeClass("btn-primary").addClass("btn-danger").find("span").text("(off)");
+      $("#notif").find("span").text("(off)");
     } else {
-      $("#notif").removeClass("btn-danger").addClass("btn-primary").find("span").text("(on)");
+      $("#notif").find("span").text("(on)");
     }
   } else {
     $("#notif").hide();
@@ -42,8 +42,8 @@ var socket = io("http://"+document.location.hostname+":8000"),notif;
 
 socket.on("connect", function() {
   socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
-    var verb = (data.num==1)?" client":" clients";
-    $("#status").text(data.num+ verb + " connected");
+    var verb = (data.num==1)?" Anon":" Anons";
+    $("#status").text(data.num+ verb + " shitposting");
     oldval = data.note;
     $('#note').hallo({editable: true});
     $("#note").html(oldval);
@@ -64,8 +64,8 @@ socket.on("connect", function() {
 });
 
 socket.on("clientChange",function(data){
-  var verb = (data.num==1)?" client":" clients";
-  $("#status").text(data.num+ verb + " connected");
+  var verb = (data.num==1)?" Anon":" Anons";
+  $("#status").text(data.num+ verb + " shitposting");
 });
 
 socket.on("delBackNote",function(data){
@@ -137,7 +137,7 @@ function listenEvents(){
   });
   $("#notif").click(function(){
     if(localStorage.notif == 1){
-      $("#notif").removeClass("btn-primary").addClass("btn-danger").find("span").text("(off)");
+      $("#notif").find("span").text("(off)");
       localStorage.notif = 0;
     } else {
       notif = new Notify("Hi,",{
@@ -146,7 +146,7 @@ function listenEvents(){
       if (notif.needsPermission()) {
         notif.requestPermission();
       } else {
-        $("#notif").removeClass("btn-danger").addClass("btn-primary").find("span").text("(on)");
+        $("#notif").find("span").text("(on)");
       }
       localStorage.notif = 1;
     }
@@ -187,7 +187,7 @@ function renderSaved(){
 }
 
 function onNotifyPermission(){
-  $("#notif").removeClass("btn-danger").addClass("btn-primary").find("span").text("(on)");
+  $("#notif").find("span").text("(on)");
   //notif.show();
 }
 

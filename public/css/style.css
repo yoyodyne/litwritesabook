@@ -8,10 +8,12 @@
 .jumbotron h2 {
   color:  #428bca;
 }
-
+.jumbotron p {
+  font-size: 10pt;
+}
 .logo-img {
-  width:50px;
-  height:50px;
+  width:80px;
+  height:80px;
 }
 
 #note {
@@ -44,4 +46,34 @@
   margin-top: 10px;
   margin-bottom: 10px;
   text-align: center !important;
+}
+
+#startwriting {
+  font-size: 22px;
+}
+
+#lit-writes {
+  font-size: 28px;
+  color: #AF0A0F;
+}
+
+#collaboration {
+  font-size: smaller;
+}
+
+body {
+  background: #EEF2FF;
+}
+
+.text-muted {
+  color: black;
+  font-size: 10pt;
+}
+
+
+
+
+a:hover {
+text-decoration: none;
+color: #DD0000!important;
 }
