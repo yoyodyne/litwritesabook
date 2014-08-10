@@ -38,7 +38,7 @@ $(function() {
   renderSaved();
 });
 
-var socket = io("http://"+document.location.hostname+":8000"),notif;
+var socket = io("http://"+document.location.hostname+":8080"),notif;
 
 socket.on("connect", function() {
   socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
