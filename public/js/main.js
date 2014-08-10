@@ -43,7 +43,7 @@ var socket = io("http://"+document.location.hostname+":8000"),notif;
 socket.on("connect", function() {
   socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
     var verb = (data.num==1)?" Anon":" Anons";
-    $("#status").text(data.num+ verb + " shitposting");
+    $("#status").text(data.num+ verb + " writing");
     oldval = data.note;
     $('#note').hallo({editable: true});
     $("#note").html(oldval);
@@ -65,11 +65,7 @@ socket.on("connect", function() {
 
 socket.on("clientChange",function(data){
   var verb = (data.num==1)?" Anon":" Anons";
-  $("#status").text(data.num+ verb + " shitposting");
-});
-
-socket.on("delBackNote",function(data){
-  window.location = "http://"+document.location.host;
+  $("#status").text(data.num+ verb + " writing");
 });
 
 socket.on("changeBackNote",function(data){

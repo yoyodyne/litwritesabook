@@ -16,6 +16,11 @@ app.use(function (req, res, next) {
         next();
     }
 );
+ids = ['outline', 'chap1', 'title', 'disc'];
+
+function inb4 (id) {
+	return ids.indexOf(id);
+};
 
 var livenote = {
 
@@ -54,7 +59,7 @@ io.on('connection', function (socket) {
       callback({ note: livenote.notes[data.id],num:clientNumber});
     } else {
       //if not available, fetch from database and then send it.
-      livenote.db.get("SELECT id,note FROM notes WHERE id = 'book'",function(err,row){
+      livenote.db.get("SELECT id,note FROM notes WHERE id = ?",inb4([data.id]),function(err,row){
         if(row){
           callback({ note: decodeURIComponent(row.note),num:clientNumber});
           livenote.notes[data.id] = decodeURIComponent(row.note);
@@ -85,13 +90,8 @@ io.on('connection', function (socket) {
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-        livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",['book',encodeURIComponent(newval),new Date().valueOf()]);
+        livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]);
       },2000);
-  });
-
-  socket.on("delNote",function(data){//XXX: Delete this shit
-      livenote.db.run("DELETE FROM notes WHERE id=?",[socket.draftid]);
-      socket.broadcast.to(socket.draftid).emit('delBackNote', {});
   });
 
   socket.on("disconnect",function(){
@@ -119,10 +119,11 @@ app.get('/terms', function (req, res) {
 
 app.get('/:id', function (req, res) {
   var serverId = new Date().valueOf();
-    livenote.db.get("SELECT id,note FROM notes WHERE id = ?",'book',function(err,row){
+    livenote.db.get("SELECT id,note FROM notes WHERE id = ?",inb4(req.params.id),function(err,row){
         if(row){
           res.sendfile(__dirname + '/notes.html');
         } else {
+		console.log(req.params.id, inb4(req.params.id));
           res.redirect(302,"http://www.livenote.org");
           console.log('Unknown error. This app is doomed.');
         }
