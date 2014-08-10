@@ -28,7 +28,7 @@ function inb4 (id) {
 	return false;
 };
 
-var livenote = {
+var lit = {
 
   port : 8000,
 
@@ -36,17 +36,17 @@ var livenote = {
 
   notes: {},
 
-  databaseLoc : "livenote.sqlite3",
+  databaseLoc : "lit.sqlite3",
 
   db : null,
 
 };
 
-livenote.db = new sqlite3.Database(livenote.databaseLoc);
+lit.db = new sqlite3.Database(lit.databaseLoc);
 
-server.listen(livenote.port, livenote.ip);
+server.listen(lit.port, lit.ip);
 
-livenote.db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)",function(err){
+lit.db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)",function(err){
   //console.log(err);
 });
 
@@ -60,18 +60,18 @@ io.on('connection', function (socket) {
 
     socket.broadcast.to(data.id).emit('clientChange', {num:clientNumber});//send client numbers.
 
-    if(livenote.notes[data.id]){
+    if(lit.notes[data.id]){
       //send notes from variable if available
-      callback({ note: livenote.notes[data.id],num:clientNumber});
+      callback({ note: lit.notes[data.id],num:clientNumber});
     } else {
       //if not available, fetch from database and then send it.
-      livenote.db.get("SELECT id,note FROM notes WHERE id = ?",inb4([data.id]),function(err,row){
+      lit.db.get("SELECT id,note FROM notes WHERE id = ?",inb4([data.id]),function(err,row){
         if(row){
           callback({ note: decodeURIComponent(row.note),num:clientNumber});
-          livenote.notes[data.id] = decodeURIComponent(row.note);
+          lit.notes[data.id] = decodeURIComponent(row.note);
         } else {
           callback({ note: "" ,num: clientNumber});
-          livenote.notes[data.id] = "";
+          lit.notes[data.id] = "";
         }
       });
     }
@@ -84,7 +84,7 @@ io.on('connection', function (socket) {
       socket.broadcast.to(socket.draftid).emit('changeBackNote', data);
 
       //count diff and prepare new note.
-      var newval = livenote.notes[socket.draftid];
+      var newval = lit.notes[socket.draftid];
       var op = data.op;
       if(op.d!==null) {
         newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
@@ -92,11 +92,11 @@ io.on('connection', function (socket) {
       if(op.i!==null){
         newval = newval.insert(op.p,op.i);
       }
-      livenote.notes[socket.draftid] = newval;
+      lit.notes[socket.draftid] = newval;
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-	livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]); 
+	lit.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]); 
       },2000);
   });
 
@@ -106,7 +106,7 @@ io.on('connection', function (socket) {
       var clientNumber = Object.keys(socket.adapter.rooms[room]).length; //count clients in room.
 
       if(clientNumber===0){
-        livenote.notes[room] = null;
+        lit.notes[room] = null;
       } else {
         socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
       }
@@ -127,7 +127,7 @@ app.get('/:id', function (req, res) {
 	if (inb4(req.params.id)) {
           res.sendfile(__dirname + '/notes.html');
         } else {
-          res.redirect(302,"http://www.livenote.org");
+          res.redirect(302,"http://www.litwritesabook.com");
           console.log('Unknown error. This app is doomed.');
         }
 });
