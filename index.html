@@ -21,14 +21,18 @@
         <h3 id="collaboration">something something collaboration<h3> 
         <br/> 
           <h4 style="color:grey">A new /lit/erary movement. --Anonymous</h4><br /> 
-        <h1 id="startwriting">[<a href="#" rel="nofollow" id="create">Start</a>]</h1>
+        <h1 id="startwriting"></h1>
       <script type="text/javascript">
-        var id = "book"// Math.random().toString(36).substr(2, 5) + new Date().valueOf().toString(16);
-        document.getElementById("create").href = id;
-        var ss = document.createElement("link");
-        ss.rel = "prerender";
-        ss.href = "/"+id;
-        document.getElementsByTagName("head")[0].appendChild(ss);
+        var ids = {"Outline": "outline",
+                   "Chapter 1": "chap1",
+                   "Title": "title",
+                   "Discussion": "disc"
+                   };
+       	for (var key in ids){
+            document.getElementById("startwriting").innerHTML += 
+                "[<a href=\""+ids[key]+"\" rel=\"nofollow\" >"+key+"</a>]";
+        }
+
       </script>
       <br/>
       <br/>

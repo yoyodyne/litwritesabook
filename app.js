@@ -16,10 +16,16 @@ app.use(function (req, res, next) {
         next();
     }
 );
+
 ids = ['outline', 'chap1', 'title', 'disc'];
 
 function inb4 (id) {
-	return ids.indexOf(id);
+	for (var i = 0; i < ids.length; i++) {
+		if (id == ids[i]) {
+			return id;
+		}
+	};
+	return false;
 };
 
 var livenote = {
@@ -90,8 +96,8 @@ io.on('connection', function (socket) {
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-        livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]);
-      },2000);
+	livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]);      
+},2000);
   });
 
   socket.on("disconnect",function(){
@@ -119,15 +125,12 @@ app.get('/terms', function (req, res) {
 
 app.get('/:id', function (req, res) {
   var serverId = new Date().valueOf();
-    livenote.db.get("SELECT id,note FROM notes WHERE id = ?",inb4(req.params.id),function(err,row){
-        if(row){
+	if (inb4(req.params.id)) {
           res.sendfile(__dirname + '/notes.html');
         } else {
-		console.log(req.params.id, inb4(req.params.id));
           res.redirect(302,"http://www.livenote.org");
           console.log('Unknown error. This app is doomed.');
         }
-    });
 });
 
 app.use("/public", express.static(__dirname + "/public"));
