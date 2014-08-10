@@ -96,8 +96,8 @@ io.on('connection', function (socket) {
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-	livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]);      
-},2000);
+	livenote.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]); 
+      },2000);
   });
 
   socket.on("disconnect",function(){
@@ -112,7 +112,6 @@ io.on('connection', function (socket) {
       }
   });
 });
-
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
