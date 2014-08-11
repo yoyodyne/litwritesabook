@@ -23,9 +23,9 @@
 $.getJSON('http://' + document.location.host + '/api/getlog/' + document.location.pathname.split('/')[2],function(data){
 	for (var note=0; note< data.length; note+=1){
 		noteContent = decodeURIComponent(data[note]['note']);
-		nextContent = decodeURIComponent(data[note+1]['note']);
-		getdiff(noteContent,nextContent);
-		//$('#display').append(noteContent + '<hr />');
+		//nextContent = decodeURIComponent(data[note+1]['note']);
+		//getdiff(noteContent,nextContent);
+		$('#display').append(noteContent + '<hr />');
 	}
 });
 
