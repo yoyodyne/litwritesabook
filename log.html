@@ -37,7 +37,7 @@ function getJSONP(url, success) {
 
 }
 
-getJSONP(document.location.host + '/api/getlog/' + document.location.pathname.split('/')[2], function(data){
+getJSONP('http://' + document.location.host + '/api/getlog/' + document.location.pathname.split('/')[2], function(data){
           alert(data);
 });  
 
