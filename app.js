@@ -46,10 +46,11 @@ lit.db = new sqlite3.Database(lit.databaseLoc);
 
 server.listen(lit.port, lit.ip);
 
-lit.db.run("CREATE TABLE notes (id TEXT PRIMARY KEY, note TEXT, updateTime INTEGER)",function(err){
-  //console.log(err);
+for (var id in ids){
+  lit.db.run("CREATE TABLE "+ids[id]+" (note TEXT, updateTime INTEGER)",function(err){
+    //console.log(err);
 });
-
+}
 
 io.on('connection', function (socket) {
   var tout;
@@ -65,7 +66,7 @@ io.on('connection', function (socket) {
       callback({ note: lit.notes[data.id],num:clientNumber});
     } else {
       //if not available, fetch from database and then send it.
-      lit.db.get("SELECT id,note FROM notes WHERE id = ?",inb4([data.id]),function(err,row){
+      lit.db.get("SELECT note FROM "+inb4([data.id])+" ORDER BY updateTime DESC LIMIT 1",function(err,row){
         if(row){
           callback({ note: decodeURIComponent(row.note),num:clientNumber});
           lit.notes[data.id] = decodeURIComponent(row.note);
@@ -96,7 +97,8 @@ io.on('connection', function (socket) {
 
       //now push to database after 2 seconds.
       tout = setTimeout(function(){
-	lit.db.run("INSERT OR REPLACE INTO notes ('id', 'note','updateTime') VALUES (?,?,?)",[inb4(socket.draftid),encodeURIComponent(newval),new Date().valueOf()]); 
+	   lit.db.run("INSERT INTO "+inb4(socket.draftid)+" ('note', 'updateTime') VALUES (?,?)",
+        [encodeURIComponent(newval),new Date().valueOf()]); 
       },2000);
   });
 
@@ -111,6 +113,7 @@ io.on('connection', function (socket) {
         socket.broadcast.to(room).emit('clientChange', {num:clientNumber});
       }
   });
+
 });
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
@@ -123,13 +126,29 @@ app.get('/terms', function (req, res) {
 });
 
 app.get('/:id', function (req, res) {
-  var serverId = new Date().valueOf();
 	if (inb4(req.params.id)) {
-          res.sendfile(__dirname + '/notes.html');
-        } else {
-          res.redirect(302,"http://www.litwritesabook.com");
-          console.log('Unknown error. This app is doomed.');
-        }
+    res.sendfile(__dirname + '/notes.html');
+  } else {
+    res.redirect(302,"http://www.litwritesabook.com");
+    console.log('Unknown error. This app is doomed.');
+  }
+});
+
+app.get('/log/:id', function (req, res) {
+  if (inb4(req.params.id)) {
+    res.sendfile(__dirname + '/log.html');
+  } else {
+    res.redirect(302,"http://litwritesabook.com");
+  }
+});
+
+app.get('/api/getlog/:id', function (req, res) {
+  if (inb4(req.params.id)) {
+    lit.db.all("SELECT * FROM "+req.params.id+" ORDER BY updateTime DESC LIMIT 10",function(err,rows){
+      if(rows) res.send(rows);
+        else  res.send({'error': '404'});
+    });
+  } else res.send({'error': '500'});
 });
 
 app.use("/public", express.static(__dirname + "/public"));

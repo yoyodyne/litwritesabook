@@ -26,7 +26,7 @@ $(function() {
       $("#notif").find("span").text("(on)");
     }
   } else {
-    $("#notif").hide();
+    $("#notifier").hide();
   }
 
   //keep checking window focus.....
@@ -85,7 +85,7 @@ socket.on("changeBackNote",function(data){
   tout = setTimeout(function(){
     $('#note').hallo({editable: true});
     if(localStorage.notif == 1 && localStorage.windowFocus != 1){
-      notif = new Notify("LiveNote",{
+      notif = new Notify("/lit/terature",{
         notifyClick: onNotifyClick,
         "body":"There are new changes in your draft."
       });
@@ -101,34 +101,6 @@ function listenEvents(){
     if(op){
       socket.emit('changeNote', {op :op});
       oldval = data.content;
-    }
-  });
-  $("#save").click(function(){
-    var urlName = window.prompt("Please enter name for your note. Saved name and URL will be displayed on right side under saved drafts.");
-    if(urlName) {
-      var urls = JSON.parse((localStorage.urls)? localStorage.urls:"{}");
-      urls[document.location.href] = urlName;
-      localStorage.urls = JSON.stringify(urls);
-      renderSaved();
-    }
-  });
-  $(".panel").on("click",".btn-xs",function(){
-    if(confirm("Are you sure you want to delete this saved link?")){
-      var urls = JSON.parse(localStorage.urls);
-      delete urls[$(this).prev().attr("href")];
-      localStorage.urls = JSON.stringify(urls);
-      $(this).parent().remove();
-      if($(".panel .list-group").is(":empty")){
-        $(".panel .list-group").html("<li class='text-center list-group-item'>no drafts saved</li>");
-      }
-    }
-  });
-  $("#delete").click(function(){
-    if(confirm("Are you sure you want to delete this note?")){
-      socket.emit('delNote', {});
-      setTimeout(function(){
-        window.location = "http://"+document.location.host;
-      },500);
     }
   });
   $("#notif").click(function(){

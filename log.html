@@ -1,0 +1,68 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+    <title>Logs</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <link href="/public/css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <pre id="display"></pre>
+      <script src="/public/js/diff.js"></script>
+      <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
+      <script>
+
+function getJSONP(url, success) {
+
+    var ud = '_' + +new Date,
+        script = document.createElement('script'),
+        head = document.getElementsByTagName('head')[0] 
+               || document.documentElement;
+
+    window[ud] = function(data) {
+        head.removeChild(script);
+        success && success(data);
+    };
+
+    script.src = url.replace('callback=?', 'callback=' + ud);
+    head.appendChild(script);
+
+}
+
+getJSONP(document.location.host + '/api/getlog/' + document.location.pathname.split('/')[2], function(data){
+          alert(data);
+});  
+
+
+
+      </script>
+      <script>
+      var one = 'beep boop';
+      var other = 'beep boob blah';
+
+      var diff = JsDiff.diffChars(one, other);
+
+      diff.forEach(function(part){
+        // green for additions, red for deletions
+        // grey for common parts
+        var color = part.added ? 'green' :
+          part.removed ? 'red' : 'grey';
+        var span = document.createElement('span');
+        span.style.color = color;
+        span.appendChild(document
+          .createTextNode(part.value));
+        display.appendChild(span);
+      });
+      </script>
+    
+  </body>
+
+  </html>

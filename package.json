@@ -27,7 +27,8 @@
     "express": "~4.0",
     "socket.io":">= 1.0.2",
     "sqlite3":"~2.2.0",
-    "compression":"~1.0"
+    "compression":"~1.0",
+    "diff":"~1.0.8"
   },
   "devDependencies": {},
   "bundleDependencies": [],
