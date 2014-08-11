@@ -20,48 +20,32 @@
       <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
       <script>
 
-function getJSONP(url, success) {
+$.getJSON('http://' + document.location.host + '/api/getlog/' + document.location.pathname.split('/')[2],function(data){
+	for (var note=0; note< data.length; note+=1){
+		noteContent = decodeURIComponent(data[note]['note']);
+		nextContent = decodeURIComponent(data[note+1]['note']);
+		getdiff(noteContent,nextContent);
+		//$('#display').append(noteContent + '<hr />');
+	}
+});
 
-    var ud = '_' + +new Date,
-        script = document.createElement('script'),
-        head = document.getElementsByTagName('head')[0] 
-               || document.documentElement;
+function getdiff(one, other){
+	var diff = JsDiff.diffChars(one, other);
 
-    window[ud] = function(data) {
-        head.removeChild(script);
-        success && success(data);
-    };
-
-    script.src = url.replace('callback=?', 'callback=' + ud);
-    head.appendChild(script);
-
-}
-
-getJSONP('http://' + document.location.host + '/api/getlog/' + document.location.pathname.split('/')[2], function(data){
-          alert(data);
-});  
-
-
-
-      </script>
-      <script>
-      var one = 'beep boop';
-      var other = 'beep boob blah';
-
-      var diff = JsDiff.diffChars(one, other);
-
-      diff.forEach(function(part){
-        // green for additions, red for deletions
-        // grey for common parts
-        var color = part.added ? 'green' :
-          part.removed ? 'red' : 'grey';
-        var span = document.createElement('span');
-        span.style.color = color;
-        span.appendChild(document
-          .createTextNode(part.value));
-        display.appendChild(span);
-      });
-      </script>
+	diff.forEach(function(part){
+	  // green for additions, red for deletions
+	  // grey for common parts
+	  var color = part.added ? 'green' :
+	    part.removed ? 'red' : 'grey';
+	  var span = document.createElement('span');
+	  span.style.color = color;
+	  span.appendChild(document
+	    .createTextNode(part.value));
+	  display.appendChild(span);
+	  display.appendChild(document.createElement('hr'))
+	});
+};
+</script>
     
   </body>
 
