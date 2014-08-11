@@ -17,10 +17,13 @@ app.use(function (req, res, next) {
     }
 );
 
-ids = ['outline', 'chap1', 'title', 'disc'];
+ids = {'Outline': 'outline',
+       'Chapter 1': 'chap1',
+       'Title': 'title'
+      };
 
 function inb4 (id) {
-	for (var i = 0; i < ids.length; i++) {
+	for (var i in ids) {
 		if (id == ids[i]) {
 			return id;
 		}
@@ -149,6 +152,11 @@ app.get('/api/getlog/:id', function (req, res) {
         else  res.send({'error': '404'});
     });
   } else res.send({'error': '500'});
+});
+
+
+app.get('/api/getchans', function (req, res) {
+  res.send(ids);
 });
 
 app.use("/public", express.static(__dirname + "/public"));
