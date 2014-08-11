@@ -25,7 +25,6 @@
       <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
       <script type="text/javascript">
 	$.getJSON('http://' + document.location.host + '/api/getchans',function(data){
-console.log(data);
        	for (var key in data){
             document.getElementById("startwriting").innerHTML += 
                 "[<a href=\""+data[key]+"\" rel=\"nofollow\" >"+key+"</a>]";
