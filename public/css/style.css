@@ -62,12 +62,16 @@ body {
 }
 
 .text-muted {
-  color: black;
+  color: #789922;
   font-size: 10pt;
+  font-family: arial,helvetica,sans-serif;
+  margin-left: 0;
+  line-height: 0%;
+-webkit-margin-before: 1em;
+-webkit-margin-after: 1em;
+-webkit-margin-start: 40px;
+-webkit-margin-end: 40px;
 }
-
-
-
 
 a:hover {
 text-decoration: none;
