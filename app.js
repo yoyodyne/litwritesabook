@@ -4,7 +4,8 @@ var express = require('express'),
     io = require('socket.io')(server),
     compress = require('compression')(),
     sqlite3 = require('sqlite3');
-
+    cookieSession = require('cookie-session')
+    tripcode = require('tripcode');
 app.use(compress);
 app.disable('x-powered-by');
 
@@ -50,10 +51,14 @@ lit.db = new sqlite3.Database(lit.databaseLoc);
 server.listen(lit.port, lit.ip);
 
 for (var id in ids){
-  lit.db.run("CREATE TABLE "+ids[id]+" (note TEXT, updateTime INTEGER)",function(err){
-    //console.log(err);
-});
+  lit.db.run("CREATE TABLE "+ids[id]+" (note TEXT, updateTime INTEGER);",function(err){
+    console.log(err);
+  });
 }
+lit.db.run("CREATE TABLE tripcode (code TEXT PRIMARY KEY , wordCount INTEGER);", function(err){
+  console.log(err)
+});
+
 
 io.on('connection', function (socket) {
   var tout;
@@ -80,7 +85,22 @@ io.on('connection', function (socket) {
       });
     }
   });
+  socket.on("addCount", function(data){
+    console.log('fuckfuckfuck')
+    lit.db.get("SELECT wordCount FROM tripcode WHERE code = "+data.trip, function( err, row){
+      if (row) {
+        var original = row;
+        console.log(row);
+      } else {
+        console.log(err);
+      }
+    });
+    lit.db.run("REPLACE INTO tripcode (wordCount, code) VALUES ("+data.count   +  original  +", "+data.trip+")", function(err){
+      console.log(err);
+      console.log("this app is doomed")
+    });
 
+  });
   socket.on("changeNote",function(data){
         //cancel pushing to database.
       clearTimeout(tout);
@@ -118,6 +138,10 @@ io.on('connection', function (socket) {
   });
 
 });
+
+app.use(cookieSession({
+    keys: ['litwritesabook_secret', 'secret2']
+}))
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
@@ -157,6 +181,24 @@ app.get('/api/getlog/:id', function (req, res) {
 
 app.get('/api/getchans', function (req, res) {
   res.send(ids);
+});
+
+
+app.get('/api/gettripcode/:trip', function (req, res) {
+  var trip = req.params.trip.split('#');
+  var username = trip[0];
+  var password = trip[1];
+  if (username && password) {
+    trip = tripcode( password );
+    rettrip = username+'!'+trip;
+    lit.db.run("INSERT INTO tripcode (code) VALUES (\""+rettrip+"\")", function (err) {
+      //console.log(err);
+    });
+    res.cookie('trip', rettrip);
+    res.send(rettrip);
+  } else {
+    res.send({'error':''});
+  }
 });
 
 app.use("/public", express.static(__dirname + "/public"));

@@ -56,7 +56,9 @@
 #collaboration {
   font-size: smaller;
 }
-
+#tripcode {
+  text-align: center;
+}
 body {
   background: #EEF2FF;
 }

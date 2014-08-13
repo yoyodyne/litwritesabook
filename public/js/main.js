@@ -38,7 +38,7 @@ $(function() {
   renderSaved();
 });
 
-var socket = io("http://"+document.location.hostname+":8080"),notif;
+var socket = io("http://"+document.location.hostname+":8000"),notif;
 
 socket.on("connect", function() {
   socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
@@ -135,7 +135,7 @@ function listenEvents(){
       'width': 170, 
       'elementHandlers': specialElementHandlers
     });
-    doc.save("livenote - "+document.location.href.split("/").pop()+".pdf");
+    doc.save("litwritesabook - "+document.location.href.split("/").pop()+".pdf");
     //$("#export").attr("href","data:text/html;base64," + btoa($("#note").html()));
     //$("#export").attr("download","livenote - "+document.location.href.split("/").pop()+".html");
     return false;
@@ -171,6 +171,8 @@ String.prototype.insert = function (index, string) {
 };
 
 var op = [],oldval,tout;
+var txtiwrote = "";
+var trip = getCookie('trip');
 function getChange(oldval, newval) {
   // Strings are immutable and have reference equality. I think this test is O(1), so its worth doing.
   if (oldval === newval) return null;
@@ -194,6 +196,19 @@ function getChange(oldval, newval) {
   if (newval.length !== commonStart + commonEnd) {
     op.i = newval.slice(commonStart, newval.length - commonEnd);  
   }
+  txtiwrote += op.i;
+  if (op.i == null ) { // TODO:XXX get this done 
+// if something to submit and has a tripcode...
+    socket.emit('addCount',{'count': txtiwrote.split(' ').length, 'trip':trip});
+    txtiwrote = "";
+  }
+  console.log(txtiwrote);
   return op;
 };
 
+
+function getCookie(name)
+{
+    var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
+     if(arr != null) return unescape(arr[2]); return null;
+}

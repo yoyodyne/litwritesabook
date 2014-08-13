@@ -22,8 +22,28 @@
         <br/> 
           <h4 style="color:grey">A new literary movement. --Anonymous</h4><br /> 
         <h1 id="startwriting"></h1>
+        <script type="text/javascript" charset="utf-8">
+function updateTripcode(data) { 
+           var trip = $('#tripcode').serialize().split('=').pop();
+	   $.get('http://' + document.location.host + '/api/gettripcode/'+ trip,function(data){
+	    $('#login').empty()
+            $('#login').append(data);
+}
+           )};
+          
+        </script>
+        <h4>tripcode:<div id="login"> <input type="text" name="tripcode" id="tripcode" /><button type="submit" onclick="return updateTripcode()">Submit</button></div></h4>
       <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
       <script type="text/javascript">
+function getCookie(name)
+{
+    var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
+     if(arr != null) return unescape(arr[2]); return null;
+}
+        if (getCookie('trip')) {
+	    $('#login').empty();
+            $('#login').append(getCookie('trip'));
+}
 	$.getJSON('http://' + document.location.host + '/api/getchans',function(data){
        	for (var key in data){
             document.getElementById("startwriting").innerHTML += 
@@ -31,9 +51,7 @@
         }
         document.getElementById("startwriting").innerHTML += 
                 "[<a href=\"https://livechan.net/chat/r#litwritesabook\" rel=\"nofollow\" >Discussion</a>]";
-	
 });
-
       </script>
       <div>
         <p>Announcements:</p>
