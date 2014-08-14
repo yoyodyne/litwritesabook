@@ -38,7 +38,7 @@ $(function() {
   renderSaved();
 });
 
-var socket = io("http://"+document.location.hostname+":8000"),notif;
+var socket = io("http://"+document.location.hostname+":8080"),notif;
 
 socket.on("connect", function() {
   socket.emit('init', { id: document.location.href.split("/").pop()},function(data){
@@ -197,12 +197,10 @@ function getChange(oldval, newval) {
     op.i = newval.slice(commonStart, newval.length - commonEnd);  
   }
   txtiwrote += op.i;
-  if (op.i == null ) { // TODO:XXX get this done 
-// if something to submit and has a tripcode...
-    socket.emit('addCount',{'count': txtiwrote.split(' ').length, 'trip':trip});
+  if ( op.i == '.' && txtiwrote != '.') { 
+    socket.emit('addCount',{count: txtiwrote.split(' ').length, trip:trip.split('!')[0]});
     txtiwrote = "";
   }
-  console.log(txtiwrote);
   return op;
 };
 

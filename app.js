@@ -6,8 +6,16 @@ var express = require('express'),
     sqlite3 = require('sqlite3');
     cookieSession = require('cookie-session')
     tripcode = require('tripcode');
+
+
+
 app.use(compress);
 app.disable('x-powered-by');
+
+app.use(cookieSession({
+    keys: ['litwritesabook_secret', 'secret2']
+}));
+
 
 app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', "http://"+req.headers.host+':8000');
@@ -52,11 +60,11 @@ server.listen(lit.port, lit.ip);
 
 for (var id in ids){
   lit.db.run("CREATE TABLE "+ids[id]+" (note TEXT, updateTime INTEGER);",function(err){
-    console.log(err);
+    //console.log(err);
   });
 }
-lit.db.run("CREATE TABLE tripcode (code TEXT PRIMARY KEY , wordCount INTEGER);", function(err){
-  console.log(err)
+lit.db.run("CREATE TABLE tripcode (code TEXT PRIMARY KEY ,trip TEXT, wordCount INTEGER);", function(err){
+  //console.log(err)
 });
 
 
@@ -86,18 +94,16 @@ io.on('connection', function (socket) {
     }
   });
   socket.on("addCount", function(data){
-    console.log('fuckfuckfuck')
-    lit.db.get("SELECT wordCount FROM tripcode WHERE code = "+data.trip, function( err, row){
+    lit.db.get("SELECT wordCount FROM tripcode WHERE code = '"+data.trip+"'", function( err, row){
       if (row) {
-        var original = row;
-        console.log(row);
-      } else {
-        console.log(err);
+        var original;
+        original = row.wordCount == null ? (0) :(parseInt(row.wordCount));
+        lit.db.run("UPDATE tripcode SET wordCount ="+ (parseInt(data.count) + original ) +" WHERE code='" +data.trip+"';", function(err){
+          //console.log(err);
+        });
+      } else if (err) {
+        //console.log(err);
       }
-    });
-    lit.db.run("REPLACE INTO tripcode (wordCount, code) VALUES ("+data.count   +  original  +", "+data.trip+")", function(err){
-      console.log(err);
-      console.log("this app is doomed")
     });
 
   });
@@ -139,9 +145,6 @@ io.on('connection', function (socket) {
 
 });
 
-app.use(cookieSession({
-    keys: ['litwritesabook_secret', 'secret2']
-}))
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
@@ -151,9 +154,12 @@ app.get('/favicon.ico', function (req, res) {
 app.get('/terms', function (req, res) {
   res.sendfile(__dirname + '/terms.html');
 });
+app.get('/leaderboard', function(req,res){
+  res.sendfile(__dirname + '/leaderboard.html');
+})
 
 app.get('/:id', function (req, res) {
-	if (inb4(req.params.id)) {
+  if (inb4(req.params.id)) {
     res.sendfile(__dirname + '/notes.html');
   } else {
     res.redirect(302,"http://www.litwritesabook.com");
@@ -191,16 +197,32 @@ app.get('/api/gettripcode/:trip', function (req, res) {
   if (username && password) {
     trip = tripcode( password );
     rettrip = username+'!'+trip;
-    lit.db.run("INSERT INTO tripcode (code) VALUES (\""+rettrip+"\")", function (err) {
-      //console.log(err);
+    lit.db.get("SELECT trip FROM tripcode WHERE code='"+username+"';", function (err, row){ 
+      if ( row && trip == row.trip ) { 
+        res.cookie('trip',rettrip);
+        res.send(rettrip);
+        loggedIn = true;
+      } else if (row && trip != row.trip) {
+        res.json({'error': 'wrong password'});
+      } else if (! row ){ // not in db
+        lit.db.run("INSERT INTO tripcode (code,trip) VALUES (\""+username+"\",'"+trip+"')", function (err) { // add new tripcode
+          //console.log('212',err);
+        });
+        res.cookie('trip', rettrip);
+        res.send(rettrip);
+      }
     });
-    res.cookie('trip', rettrip);
-    res.send(rettrip);
   } else {
-    res.send({'error':''});
+    res.json({'error':'format'});
   }
 });
 
+app.get('/api/getleaderboard', function (req, res){
+  lit.db.all("SELECT * FROM tripcode ORDER BY wordCount DESC",function(err,rows){
+    if(rows) res.json(rows);
+    else res.json({'error': '404'});
+  });
+});
 app.use("/public", express.static(__dirname + "/public"));
 
 

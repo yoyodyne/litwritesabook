@@ -26,8 +26,12 @@
 function updateTripcode(data) { 
            var trip = $('#tripcode').serialize().split('=').pop();
 	   $.get('http://' + document.location.host + '/api/gettripcode/'+ trip,function(data){
-	    $('#login').empty()
-            $('#login').append(data);
+           if (data['error']){$('#login').append('Wrong Password')}
+           else {
+	           $('#login').empty();
+             $('#login').append('<strong>'+data+'</strong>');
+	   }
+
 }
            )};
           
@@ -42,7 +46,7 @@ function getCookie(name)
 }
         if (getCookie('trip')) {
 	    $('#login').empty();
-            $('#login').append(getCookie('trip'));
+            $('#login').append('<strong>'+getCookie('trip')+"</strong>");
 }
 	$.getJSON('http://' + document.location.host + '/api/getchans',function(data){
        	for (var key in data){
@@ -55,14 +59,14 @@ function getCookie(name)
       </script>
       <div>
         <p>Announcements:</p>
-        <p class="text-muted">>This book is backed up every 30 seconds.</p>
+        <p class="text-muted">>This book is <a href="/log/outline">backed up</a> every 30 seconds.</p>
+        <p class="text-muted">>Check the <a href="/leaderboard">/leaderboard</a> for contribution.</p>
         <p class="text-muted">>inb4 Tao Lin</p>
-        <p class="text-muted">>Let's see what /lit/ can come up with</p>
+        <p class="text-muted">>implying /lit/ can write</p>
       </div>
     </div>
     <footer class="text-center">
       <p><em>Created by</em><br /> Anonymous
-      <p>Suggestion? <a href="https://code.stypi.com/greato/litwritesabook">https://code.stypi.com/greato/litwritesabook</a></p>
     </footer>
   </div>
 <!--<div class="col-md-10">
