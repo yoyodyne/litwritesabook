@@ -52,8 +52,12 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/public/js/main.js"></script>
     <script type="text/javascript" charset="utf-8">
-    	document.title = "/lit/ - " + document.location.pathname
-        document.getElementById('tripcode').innerHTML = getCookie('trip');
+    	document.title = "/lit/ - " + document.location.pathname;
+        if (getCookie('trip')){
+          document.getElementById('tripcode').innerHTML = getCookie('trip');
+        } else {
+          document.getElementById('tripcode').innerHTML = 'Anonymous';
+        }
     </script>
   </body>
 
