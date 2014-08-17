@@ -54,6 +54,12 @@ var lit = {
 
 };
 
+var docs = {
+  'chap1': 'https://docs.google.com/document/d/1NyrIn8eF0Z6w8DAjSsSMIN1ph5WbQF-hDLjSbIjEQAU/edit',
+  'outline': 'https://docs.google.com/document/d/1wXg-EkJwVQicWgHSWoE7_AcUysjrKAoKM9ssG0TnIQM/edit',
+  'title': 'https://docs.google.com/document/d/1BgPMQ81rPnR73ut4u9tb7vBwjRVY-Tr5Wy_UbSaMmWI/edit'
+}
+
 lit.db = new sqlite3.Database(lit.databaseLoc);
 
 server.listen(lit.port, lit.ip);
@@ -223,6 +229,10 @@ app.get('/api/getleaderboard', function (req, res){
     else res.json({'error': '404'});
   });
 });
+app.get('/api/getdoc/:id', function (req, res){
+  res.send(docs[req.params.id]);
+});
+
 app.use("/public", express.static(__dirname + "/public"));
 
 

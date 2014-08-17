@@ -96,13 +96,13 @@ socket.on("changeBackNote",function(data){
 
 
 function listenEvents(){
-  $("#note").on("hallomodified",function(e,data){
-    var op = getChange(oldval,data.content);
-    if(op){
-      socket.emit('changeNote', {op :op});
-      oldval = data.content;
-    }
-  });
+  //$("#note").on("hallomodified",function(e,data){
+  //  var op = getChange(oldval,data.content);
+  //  if(op){
+  //    socket.emit('changeNote', {op :op});
+  //    oldval = data.content;
+  //  }
+  //});
   $("#notif").click(function(){
     if(localStorage.notif == 1){
       $("#notif").find("span").text("(off)");

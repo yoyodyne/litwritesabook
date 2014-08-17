@@ -14,26 +14,6 @@
     <!-- Add custom CSS here -->
     <link href="/public/css/style.css" rel="stylesheet">
   </head>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-    <script src="/public/js/main.js"></script>
-<script type="text/javascript" charset="utf-8">
-	function autoResize(id){
-    var newheight;
-    var newwidth;
-
-    if(document.getElementById){
-        newheight=document.getElementById(id).contentWindow.document .body.scrollHeight;
-        newwidth=document.getElementById(id).contentWindow.document .body.scrollWidth;
-    }
-
-    document.getElementById(id).height= (newheight) + "px";
-    document.getElementById(id).width= (newwidth) + "px";
-}
-    $.get('http://' + document.location.host + '/api/getdoc/' + document.location.pathname.substr(1) , function(data){
-              $('#maindoc').attr('src',data);
-});
-</script>
   <body>
 
     <!-- Full Page Image Header Area -->
@@ -50,13 +30,10 @@
             <div class="col-md-4 col-sm-4 col-xs-4">
                 <h4 class="pull-right" style="margin-top:25px;"><span class="label label-success"id="tripcode"></span>  <span id="status" class="label label-danger">disconnected</span></h4>
             </div>
-<div class="col-md-12">
-<iframe width="100%" style="height: 1200px" onLoad="autoResize('maindoc');" id="maindoc" src="" frameborder="0" ></iframe>    
-	
-</div>
-
-
-</div>
+            <div class="col-md-12  col-sm-12 col-xs-12" style="margin-top:0px;">
+              <section id="note" data-ph="start typing your draft here..."></section>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -66,11 +43,14 @@
     <script src="/public/js/comp-lib.js"></script>
     <!--
     <script src="/public/js/jspdf.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="http://rangy.googlecode.com/svn/trunk/currentrelease/rangy-core.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <script src="/public/js/hallo.js"></script>
     -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/public/js/main.js"></script>
     <script type="text/javascript" charset="utf-8">
     	document.title = "/lit/ - " + document.location.pathname;
         if (getCookie('trip')){
