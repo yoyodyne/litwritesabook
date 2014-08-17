@@ -52,7 +52,7 @@ function getCookie(name)
 	$.getJSON('http://' + document.location.host + '/api/getchans',function(data){
        	for (var key in data){
             document.getElementById("startwriting").innerHTML += 
-                "[<a href=\""+data[key]+"\" rel=\"nofollow\" >"+key+' - '+data[key]+"</a>]";
+                "[<a href=\""+data[key]+"\" rel=\"nofollow\" >"+key+' - /'+data[key]+"/</a>]";
         }
         document.getElementById("startwriting").innerHTML += 
                 "[<a href=\"https://livechan.net/chat/r#litwritesabook\" rel=\"nofollow\" >Discussion</a>]";
