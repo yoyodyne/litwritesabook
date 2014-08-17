@@ -20,7 +20,8 @@
         <h2 id="lit-writes">/lit/ writes /lit/terature</h2>
         <h3 id="collaboration">something something collaboration<h3> 
         <br/> 
-          <h4 style="color:grey">A new literary movement. --Anonymous</h4><br /> 
+          <h4 style="color:grey">A new literary movement. --Anonymous</h4><br />
+          <h4 style="color:grey">We made this website so we can write a book collectively. You may choose to write about just anything as a collective.</h4>
         <h1 id="startwriting"></h1>
         <script type="text/javascript" charset="utf-8">
 function updateTripcode(data) { 
@@ -36,7 +37,7 @@ function updateTripcode(data) {
            )};
           
         </script>
-        <h4>tripcode:<div id="login"> <input type="text" name="tripcode" id="tripcode" /><button type="submit" onclick="return updateTripcode()">Submit</button></div></h4>
+        <h4>tripcode(u#p):<div id="login"> <input type="text" name="tripcode" id="tripcode" /><button type="submit" onclick="return updateTripcode()">Submit</button></div></h4>
       <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
       <script type="text/javascript">
 function getCookie(name)
@@ -51,7 +52,7 @@ function getCookie(name)
 	$.getJSON('http://' + document.location.host + '/api/getchans',function(data){
        	for (var key in data){
             document.getElementById("startwriting").innerHTML += 
-                "[<a href=\""+data[key]+"\" rel=\"nofollow\" >"+key+"</a>]";
+                "[<a href=\""+data[key]+"\" rel=\"nofollow\" >"+key+' - '+data[key]+"</a>]";
         }
         document.getElementById("startwriting").innerHTML += 
                 "[<a href=\"https://livechan.net/chat/r#litwritesabook\" rel=\"nofollow\" >Discussion</a>]";
