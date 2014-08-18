@@ -23,47 +23,32 @@
           <h4 style="color:grey">A new literary movement. --Anonymous</h4><br />
           <h4 style="color:grey">Goal: Write a postmodern book and publish it as a collective effort</h4>
         <h1 id="startwriting"></h1>
-        <script type="text/javascript" charset="utf-8">
-function updateTripcode(data) { 
-           var trip = $('#tripcode').serialize().split('=').pop();
-	   $.get('http://' + document.location.host + '/api/gettripcode/'+ trip,function(data){
-           if (data['error']){$('#login').append('Wrong Password')}
-           else {
-	           $('#login').empty();
-             $('#login').append('<strong>'+data+'</strong>');
-	   }
-
-}
-           )};
-          
-        </script>
-        <h4>tripcode(u#p):<div id="login"> <input type="text" name="tripcode" id="tripcode" /><button type="submit" onclick="return updateTripcode()">Submit</button></div></h4>
       <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
       <script type="text/javascript">
-function getCookie(name)
-{
-    var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
-     if(arr != null) return unescape(arr[2]); return null;
-}
-        if (getCookie('trip')) {
-	    $('#login').empty();
-            $('#login').append('<strong>'+getCookie('trip')+"</strong>");
-}
 	$.getJSON('http://' + document.location.host + '/api/getchans',function(data){
+    var extra= true;
        	for (var key in data){
-            document.getElementById("startwriting").innerHTML += 
-                "[<a href=\""+data[key]+"\" rel=\"nofollow\" >"+key+' - /'+data[key]+"/</a>]";
+          if (key == '--') {extra=false;document.getElementById("startwriting").innerHTML += '</p>';continue;};
+          if (extra){
+                      document.getElementById("startwriting").innerHTML += 
+                          "[<a href=\""+data[key]+"\" rel=\"nofollow\" >"+key+' - /'+data[key]+"/</a>]";
+          } else {
+                      document.getElementById("startwriting").innerHTML += 
+                          "<a class=\"small\" href=\""+data[key]+"\" rel=\"nofollow\" >["+key+' - /'+data[key]+"/]</a>";
+          }
         }
-        document.getElementById("startwriting").innerHTML += 
-                "[<a href=\"https://livechan.net/chat/r#litwritesabook\" rel=\"nofollow\" >Discussion</a>]";
-});
+        // document.getElementById("startwriting").innerHTML += 
+        //         "[<a href=\"https://livechan.net/chat/r#litwritesabook\" rel=\"nofollow\" >Discussion</a>]";
+        });
       </script>
       <div>
         <p>Announcements:</p>
-        <p class="text-muted">>This book is <a href="/log/outline">backed up</a> every 30 seconds.</p>
-        <p class="text-muted">>Check the <a href="/leaderboard">/leaderboard</a> for contribution.</p>
+        <p class="text-muted">>The unedited preview of Chapter 1 is here. <a href="/public/chap1.pdf">Download PDF</a>. READ BEFORE YOU JUMP IN</p>
+        <p class="text-muted">>We crunched 5074 words(14 pages) in 4 hours before Anonymous Frog pasted his own thing.</p>
+        <p class="text-muted">>Wanted: proofreaders and mods! Email <a href="mailto:josephjstallion@gmail.com">josephjstallion@gmail.com</a></p>
+        <p class="text-muted">></p>
         <p class="text-muted">>inb4 Tao Lin</p>
-        <p class="text-muted">>read the <a href="/terms">/terms</a> if you really care about this</p>
+        <p class="text-muted">>read the <a href="/terms">/terms</a> if you really care</p>
       </div>
     </div>
     <footer class="text-center">

@@ -4,7 +4,7 @@ var express = require('express'),
     io = require('socket.io')(server),
     compress = require('compression')(),
     sqlite3 = require('sqlite3');
-    cookieSession = require('cookie-session')
+    cookieSession = require('cookie-session');
     tripcode = require('tripcode');
 
 
@@ -26,10 +26,24 @@ app.use(function (req, res, next) {
     }
 );
 
-ids = {'Outline': 'outline',
+ids = {
        'Chapter 1': 'chap1',
-       'Title': 'title'
+       'Outline': 'outline',
+       'Title': 'title',
+       'Chapter 2': 'chap2',
+       '--': '--',
+       'Chapter 1(Impertinent)': 'chapx',
+       'Outline 2(Impertinent)': 'outlinev2'
       };
+
+var docs = {
+  'chap1': 'https://docs.google.com/document/d/1NyrIn8eF0Z6w8DAjSsSMIN1ph5WbQF-hDLjSbIjEQAU/edit',
+  'outline': 'https://docs.google.com/document/d/1wXg-EkJwVQicWgHSWoE7_AcUysjrKAoKM9ssG0TnIQM/edit',
+  'title': 'https://docs.google.com/document/d/1BgPMQ81rPnR73ut4u9tb7vBwjRVY-Tr5Wy_UbSaMmWI/edit',
+  'chap2': 'https://docs.google.com/document/d/1nmltsbof0iLO99P5pG6LmNc5JHHhuami22txJBXqffw/edit',
+  'chapx': 'https://docs.google.com/document/d/1lWFZ_aLbR-PFNQqWWn48jpxecPUvvUDom92n2BGL2YM/edit',
+  'outlinev2': 'https://docs.google.com/document/d/1JH5areW9BKarZYz0KEv-nboCJytIJRGGTKwZEbEzEuM/edit'
+};
 
 function inb4 (id) {
 	for (var i in ids) {
@@ -54,11 +68,6 @@ var lit = {
 
 };
 
-var docs = {
-  'chap1': 'https://docs.google.com/document/d/1NyrIn8eF0Z6w8DAjSsSMIN1ph5WbQF-hDLjSbIjEQAU/edit',
-  'outline': 'https://docs.google.com/document/d/1wXg-EkJwVQicWgHSWoE7_AcUysjrKAoKM9ssG0TnIQM/edit',
-  'title': 'https://docs.google.com/document/d/1BgPMQ81rPnR73ut4u9tb7vBwjRVY-Tr5Wy_UbSaMmWI/edit'
-}
 
 lit.db = new sqlite3.Database(lit.databaseLoc);
 
@@ -99,43 +108,43 @@ io.on('connection', function (socket) {
       });
     }
   });
-  socket.on("addCount", function(data){
-    lit.db.get("SELECT wordCount FROM tripcode WHERE code = '"+data.trip+"'", function( err, row){
-      if (row) {
-        var original;
-        original = row.wordCount == null ? (0) :(parseInt(row.wordCount));
-        lit.db.run("UPDATE tripcode SET wordCount ="+ (parseInt(data.count) + original ) +" WHERE code='" +data.trip+"';", function(err){
-          //console.log(err);
-        });
-      } else if (err) {
-        //console.log(err);
-      }
-    });
+  // socket.on("addCount", function(data){
+  //   lit.db.get("SELECT wordCount FROM tripcode WHERE code = '"+data.trip+"'", function( err, row){
+  //     if (row) {
+  //       var original;
+  //       original = row.wordCount == null ? (0) :(parseInt(row.wordCount));
+  //       lit.db.run("UPDATE tripcode SET wordCount ="+ (parseInt(data.count) + original ) +" WHERE code='" +data.trip+"';", function(err){
+  //         //console.log(err);
+  //       });
+  //     } else if (err) {
+  //       //console.log(err);
+  //     }
+  //   });
 
-  });
-  socket.on("changeNote",function(data){
-        //cancel pushing to database.
-      clearTimeout(tout);
-      //send data back to clients.
-      socket.broadcast.to(socket.draftid).emit('changeBackNote', data);
+  // });
+  // socket.on("changeNote",function(data){
+  //       //cancel pushing to database.
+  //     clearTimeout(tout);
+  //     //send data back to clients.
+  //     socket.broadcast.to(socket.draftid).emit('changeBackNote', data);
 
-      //count diff and prepare new note.
-      var newval = lit.notes[socket.draftid];
-      var op = data.op;
-      if(op.d!==null) {
-        newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
-      }
-      if(op.i!==null){
-        newval = newval.insert(op.p,op.i);
-      }
-      lit.notes[socket.draftid] = newval;
+  //     //count diff and prepare new note.
+  //     var newval = lit.notes[socket.draftid];
+  //     var op = data.op;
+  //     if(op.d!==null) {
+  //       newval = newval.slice(0,op.p)+newval.slice(op.p+op.d);
+  //     }
+  //     if(op.i!==null){
+  //       newval = newval.insert(op.p,op.i);
+  //     }
+  //     lit.notes[socket.draftid] = newval;
 
-      //now push to database after 2 seconds.
-      tout = setTimeout(function(){
-	   lit.db.run("INSERT INTO "+inb4(socket.draftid)+" ('note', 'updateTime') VALUES (?,?)",
-        [encodeURIComponent(newval),new Date().valueOf()]); 
-      },2000);
-  });
+  //     //now push to database after 2 seconds.
+  //     tout = setTimeout(function(){
+	 //   lit.db.run("INSERT INTO "+inb4(socket.draftid)+" ('note', 'updateTime') VALUES (?,?)",
+  //       [encodeURIComponent(newval),new Date().valueOf()]); 
+  //     },2000);
+  // });
 
   socket.on("disconnect",function(){
       var room  = socket.draftid;
@@ -173,22 +182,22 @@ app.get('/:id', function (req, res) {
   }
 });
 
-app.get('/log/:id', function (req, res) {
-  if (inb4(req.params.id)) {
-    res.sendfile(__dirname + '/log.html');
-  } else {
-    res.redirect(302,"http://litwritesabook.com");
-  }
-});
+// app.get('/log/:id', function (req, res) {
+//   if (inb4(req.params.id)) {
+//     res.sendfile(__dirname + '/log.html');
+//   } else {
+//     res.redirect(302,"http://litwritesabook.com");
+//   }
+// });
 
-app.get('/api/getlog/:id', function (req, res) {
-  if (inb4(req.params.id)) {
-    lit.db.all("SELECT * FROM "+req.params.id+" ORDER BY updateTime DESC LIMIT 10",function(err,rows){
-      if(rows) res.send(rows);
-        else  res.send({'error': '404'});
-    });
-  } else res.send({'error': '500'});
-});
+// app.get('/api/getlog/:id', function (req, res) {
+//   if (inb4(req.params.id)) {
+//     lit.db.all("SELECT * FROM "+req.params.id+" ORDER BY updateTime DESC LIMIT 10",function(err,rows){
+//       if(rows) res.send(rows);
+//         else  res.send({'error': '404'});
+//     });
+//   } else res.send({'error': '500'});
+// });
 
 
 app.get('/api/getchans', function (req, res) {
@@ -196,39 +205,39 @@ app.get('/api/getchans', function (req, res) {
 });
 
 
-app.get('/api/gettripcode/:trip', function (req, res) {
-  var trip = req.params.trip.split('#');
-  var username = trip[0];
-  var password = trip[1];
-  if (username && password) {
-    trip = tripcode( password );
-    rettrip = username+'!'+trip;
-    lit.db.get("SELECT trip FROM tripcode WHERE code='"+username+"';", function (err, row){ 
-      if ( row && trip == row.trip ) { 
-        res.cookie('trip',rettrip);
-        res.send(rettrip);
-        loggedIn = true;
-      } else if (row && trip != row.trip) {
-        res.json({'error': 'wrong password'});
-      } else if (! row ){ // not in db
-        lit.db.run("INSERT INTO tripcode (code,trip) VALUES (\""+username+"\",'"+trip+"')", function (err) { // add new tripcode
-          //console.log('212',err);
-        });
-        res.cookie('trip', rettrip);
-        res.send(rettrip);
-      }
-    });
-  } else {
-    res.json({'error':'format'});
-  }
-});
+// app.get('/api/gettripcode/:trip', function (req, res) {
+//   var trip = req.params.trip.split('#');
+//   var username = trip[0];
+//   var password = trip[1];
+//   if (username && password) {
+//     trip = tripcode( password );
+//     rettrip = username+'!'+trip;
+//     lit.db.get("SELECT trip FROM tripcode WHERE code='"+username+"';", function (err, row){ 
+//       if ( row && trip == row.trip ) { 
+//         res.cookie('trip',rettrip);
+//         res.send(rettrip);
+//         loggedIn = true;
+//       } else if (row && trip != row.trip) {
+//         res.json({'error': 'wrong password'});
+//       } else if (! row ){ // not in db
+//         lit.db.run("INSERT INTO tripcode (code,trip) VALUES (\""+username+"\",'"+trip+"')", function (err) { // add new tripcode
+//           //console.log('212',err);
+//         });
+//         res.cookie('trip', rettrip);
+//         res.send(rettrip);
+//       }
+//     });
+//   } else {
+//     res.json({'error':'format'});
+//   }
+// });
 
-app.get('/api/getleaderboard', function (req, res){
-  lit.db.all("SELECT * FROM tripcode ORDER BY wordCount DESC",function(err,rows){
-    if(rows) res.json(rows);
-    else res.json({'error': '404'});
-  });
-});
+// app.get('/api/getleaderboard', function (req, res){
+//   lit.db.all("SELECT * FROM tripcode ORDER BY wordCount DESC",function(err,rows){
+//     if(rows) res.json(rows);
+//     else res.json({'error': '404'});
+//   });
+// });
 app.get('/api/getdoc/:id', function (req, res){
   res.send(docs[req.params.id]);
 });

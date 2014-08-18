@@ -29,10 +29,10 @@
 
     document.getElementById(id).height= (newheight) + "px";
     document.getElementById(id).width= (newwidth) + "px";
-}
+    }
     $.get('http://' + document.location.host + '/api/getdoc/' + document.location.pathname.substr(1) , function(data){
               $('#maindoc').attr('src',data);
-});
+    });
 </script>
   <body>
 
@@ -43,9 +43,7 @@
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-8 col-sm-8 col-xs-8">
-              <h2>[<a href="/">/lit/</a>]</h2>
-                [<a id="export" title="export as PDF">PDF</a>]
-                <div id="notifier">[<a id="notif" class="">notifications <span>(off)</span></a>]</div>
+              <h2><a href="/">home</a>| disc <a href="https://livechan.net/chat/r#litwritesabook">here</a></h2>
             </div>
             <div class="col-md-4 col-sm-4 col-xs-4">
                 <h4 class="pull-right" style="margin-top:25px;"><span class="label label-success"id="tripcode"></span>  <span id="status" class="label label-danger">disconnected</span></h4>
